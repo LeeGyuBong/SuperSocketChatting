@@ -1,30 +1,13 @@
-﻿using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Protocol;
+﻿using SuperSocket.SocketBase.Protocol;
+using SuperSocket.SocketBase;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SuperSocketStudy.SuperSocket
+namespace SuperSocketStudy.Server
 {
-    public class TelnetServer : AppServer<TelnetSession>
-    {
-        // 모든 AppSession 객체를 관리, SuperSocket의 몸통
-
-        protected override bool Setup(IRootConfig rootConfig, IServerConfig config)
-        {
-            return base.Setup(rootConfig, config);
-        }
-
-        protected override void OnStartup()
-        {
-            base.OnStartup();
-        }
-
-        protected override void OnStopped()
-        {
-            base.OnStopped();
-        }
-    }
-
     public class TelnetSession : AppSession<TelnetSession>
     {
         // 서버에 연결되는 Socket 로직 클래스

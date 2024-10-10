@@ -148,11 +148,14 @@
     <Compile Include="PacketHandler\Command.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SuperSocket\SuperSocketServer.cs" />
+    <Compile Include="Server\Session.cs" />
+    <Compile Include="Server\Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Config\log4net.config" />
+    <None Include="Config\log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Config\log4net.unix.config" />
     <None Include="packages.config" />
     <None Include="supersocket.cmd" />
@@ -170,6 +173,5 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

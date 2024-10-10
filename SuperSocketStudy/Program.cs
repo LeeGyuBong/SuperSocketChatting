@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using SuperSocket.SocketBase;
+using SuperSocket.SocketBase.Config;
+using SuperSocket.SocketEngine;
 using SuperSocketStudy.SuperSocket;
 using System;
 
@@ -8,18 +11,18 @@ namespace SuperSocketStudy
     {
         static void Main(string[] args)
         {
-            var appServer = new TelnetServer();
-
-            //Setup the appServer
-            if (!appServer.Setup(2012)) //Setup with listening port
+            var bootstrap = BootstrapFactory.CreateBootstrap();
+            if (false == bootstrap.Initialize())
             {
-                Console.WriteLine("Failed to setup!");
+                Console.WriteLine("Failed to initialize!");
                 Console.ReadKey();
                 return;
             }
 
-            //Try to start the appServer
-            if (!appServer.Start())
+            var result = bootstrap.Start();
+            Console.WriteLine("Start result: {0}!", result);
+
+            if (StartResult.Failed == result)
             {
                 Console.WriteLine("Failed to start!");
                 Console.ReadKey();
@@ -37,7 +40,7 @@ namespace SuperSocketStudy
             Console.WriteLine();
 
             //Stop the appServer
-            appServer.Stop();
+            bootstrap.Stop();
 
             Console.WriteLine("The server was stopped!");
             Console.ReadKey();
