@@ -4,8 +4,9 @@ using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Protocol;
 using System;
 
-namespace SuperSocketServer.Network
+namespace SuperSocketServer.Network.TCP
 {
+    // SuperSocket을 사용한 TCP 서버
     // 모든 AppSession 객체를 관리, SuperSocket의 몸통
     public partial class MyServer : AppServer<MySession, MyBinaryRequestInfo>
     {

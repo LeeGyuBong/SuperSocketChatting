@@ -3,7 +3,7 @@ using SuperSocket.Facility.Protocol;
 using SuperSocket.SocketBase.Protocol;
 using System;
 
-namespace SuperSocketServer.Network
+namespace SuperSocketServer.Network.TCP
 {
     public class MyBinaryRequestInfo : BinaryRequestInfo
     {

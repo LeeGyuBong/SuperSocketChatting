@@ -1,4 +1,4 @@
-﻿using SuperSocketServer.Network;
+﻿using SuperSocketServer.Network.TCP;
 using System;
 
 namespace SuperSocketServer

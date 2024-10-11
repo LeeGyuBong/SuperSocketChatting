@@ -4,7 +4,7 @@ using SuperSocketServer.PacketHandler;
 using System;
 using System.Collections.Generic;
 
-namespace SuperSocketServer.Network
+namespace SuperSocketServer.Network.TCP
 {
     // 패킷이 많아지면 Server.cs의 가독성이 떨어질 수 있음
     // 그래서 패킷 등록 부분만 따로 분리함
