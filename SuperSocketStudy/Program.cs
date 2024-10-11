@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketEngine;
-using SuperSocketStudy.SuperSocket;
+﻿using SuperSocketStudy.Network;
 using System;
+using System.Timers;
 
 namespace SuperSocketStudy
 {
@@ -11,38 +8,26 @@ namespace SuperSocketStudy
     {
         static void Main(string[] args)
         {
-            var bootstrap = BootstrapFactory.CreateBootstrap();
-            if (false == bootstrap.Initialize())
+            var server = new MyServer();
+
+            // Config 로드
+            if (false == server.InitConfig())
             {
-                Console.WriteLine("Failed to initialize!");
-                Console.ReadKey();
                 return;
             }
 
-            var result = bootstrap.Start();
-            Console.WriteLine("Start result: {0}!", result);
-
-            if (StartResult.Failed == result)
+            // Config 및 핸들러 등록
+            if(false == server.SetupServer())
             {
-                Console.WriteLine("Failed to start!");
-                Console.ReadKey();
                 return;
             }
 
-            Console.WriteLine("The server started successfully, press key 'q' to stop it!");
-
-            while (Console.ReadKey().KeyChar != 'q')
+            if (false == server.Start())
             {
-                Console.WriteLine();
-                continue;
+                return;
             }
 
-            Console.WriteLine();
-
-            //Stop the appServer
-            bootstrap.Stop();
-
-            Console.WriteLine("The server was stopped!");
+            Console.WriteLine("\n서버 네트워크 시작\nkey를 누르면 종료한다....");
             Console.ReadKey();
         }
     }
