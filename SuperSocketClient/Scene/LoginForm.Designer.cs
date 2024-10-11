@@ -1,6 +1,6 @@
-﻿namespace SuperSocketClient
+﻿namespace SuperSocketClient.Scene
 {
-    partial class Form1
+    partial class LoginForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,12 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "SuperSocketClient";
+            LoginReq = new Button();
+            SuspendLayout();
+            // 
+            // LoginReq
+            // 
+            LoginReq.Location = new Point(315, 259);
+            LoginReq.Name = "LoginReq";
+            LoginReq.Size = new Size(154, 65);
+            LoginReq.TabIndex = 0;
+            LoginReq.Text = "Login";
+            LoginReq.UseVisualStyleBackColor = true;
+            LoginReq.Click += LoginReq_Click;
+            // 
+            // LoginForm
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(LoginReq);
+            Name = "LoginForm";
+            Text = "SuperSocketClient_Login";
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private Button LoginReq;
     }
 }
