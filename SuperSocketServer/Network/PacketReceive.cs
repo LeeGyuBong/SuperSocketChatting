@@ -2,12 +2,8 @@
 using SuperSocket.Facility.Protocol;
 using SuperSocket.SocketBase.Protocol;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SuperSocketStudy.Network
+namespace SuperSocketServer.Network
 {
     public class MyBinaryRequestInfo : BinaryRequestInfo
     {

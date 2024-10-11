@@ -2,20 +2,14 @@
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Protocol;
-using SuperSocketStudy.PacketHandler;
 using System;
-using System.Collections.Generic;
 
-namespace SuperSocketStudy.Network
+namespace SuperSocketServer.Network
 {
-    public class MyServer : AppServer<MySession, MyBinaryRequestInfo>
+    // 모든 AppSession 객체를 관리, SuperSocket의 몸통
+    public partial class MyServer : AppServer<MySession, MyBinaryRequestInfo>
     {
-        Dictionary<int, Action<MySession, MyBinaryRequestInfo>> __handlerMap = new Dictionary<int, Action<MySession, MyBinaryRequestInfo>>();
-        CommonHandler __commonHanlder = new CommonHandler();
-
         IServerConfig __config;
-
-        // 모든 AppSession 객체를 관리, SuperSocket의 몸통
 
         public MyServer()
             : base(new DefaultReceiveFilterFactory<ReceiveFilter, MyBinaryRequestInfo>())
@@ -23,13 +17,6 @@ namespace SuperSocketStudy.Network
             NewSessionConnected += new SessionHandler<MySession>(OnConnected);
             SessionClosed += new SessionHandler<MySession, CloseReason>(OnClosed);
             NewRequestReceived += new RequestHandler<MySession, MyBinaryRequestInfo>(RequestReceived);
-        }
-
-        void RegistHandler()
-        {
-            // TODO : 패킷 추가되면 아래에 추가해 나갈 것
-
-            __handlerMap.Add((int)PacketID.PacketID_DummyChatReq, __commonHanlder.RequestDummyChat);
         }
 
         public bool InitConfig()
@@ -41,7 +28,7 @@ namespace SuperSocketStudy.Network
                 Ip = "Any",
                 MaxConnectionNumber = 100,
                 Mode = SocketMode.Tcp,
-                Name = "SuperSocketStudy"
+                Name = "SuperSocketServer"
             };
 
             return __config != null ? true : false;
@@ -53,27 +40,28 @@ namespace SuperSocketStudy.Network
             {
                 if (false == Setup(new RootConfig(), __config, logFactory: new ConsoleLogFactory()))
                 {
-                    throw new Exception();
+                    return false;
                 }
 
                 RegistHandler();
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO : Log
+                Console.WriteLine($"Exception!! Message : {ex.Message}, StackTrace : {ex.StackTrace}");
                 return false;
             }
         }
 
         static void OnConnected(MySession session)
         {
-
+            Console.WriteLine($"세션 {session.SessionID} 접속.");
         }
 
         static void OnClosed(MySession session, CloseReason reason)
         {
+            Console.WriteLine($"세션 {session.SessionID} 접속 해제 : {reason}");
         }
 
         void RequestReceived(MySession session, MyBinaryRequestInfo requestInfo)
@@ -84,7 +72,7 @@ namespace SuperSocketStudy.Network
             }
             else
             {
-                // TODO : Log
+                Console.WriteLine($"세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
             }
         }
     }

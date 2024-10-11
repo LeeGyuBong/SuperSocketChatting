@@ -1,16 +1,10 @@
 ﻿using Newtonsoft.Json;
-using SuperSocketStudy.Network;
-using SuperSocketStudy.Packet;
+using SuperSocketServer.Network;
+using SuperSocketServer.Packet;
 using System.Text;
 
-namespace SuperSocketStudy.PacketHandler
+namespace SuperSocketServer.PacketHandler
 {
-    public enum PacketID : int
-    {
-        PacketID_DummyChatReq = 1,
-        PacketID_LoginReq = 11,
-    }
-
     public class CommonHandler
     {
         public void RequestDummyChat(MySession session, MyBinaryRequestInfo reqInfo)

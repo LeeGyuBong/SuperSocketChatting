@@ -1,9 +1,6 @@
 ﻿using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Protocol;
-using SuperSocketStudy.Network;
-using System;
 
-namespace SuperSocketStudy.Network
+namespace SuperSocketServer.Network
 {
     public class MySession : AppSession<MySession, MyBinaryRequestInfo>
     {

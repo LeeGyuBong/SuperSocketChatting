@@ -1,4 +1,4 @@
-namespace SuperSocketClient
+namespace SuperSocketClient.Main
 {
     internal static class Program
     {

@@ -1,8 +1,7 @@
-﻿using SuperSocketStudy.Network;
+﻿using SuperSocketServer.Network;
 using System;
-using System.Timers;
 
-namespace SuperSocketStudy
+namespace SuperSocketServer
 {
     internal class Program
     {
@@ -17,7 +16,7 @@ namespace SuperSocketStudy
             }
 
             // Config 및 핸들러 등록
-            if(false == server.SetupServer())
+            if (false == server.SetupServer())
             {
                 return;
             }
@@ -27,7 +26,7 @@ namespace SuperSocketStudy
                 return;
             }
 
-            Console.WriteLine("\n서버 네트워크 시작\nkey를 누르면 종료한다....");
+            Console.WriteLine("\n서버 네트워크 시작\n아무키를 누르면 종료한다....");
             Console.ReadKey();
         }
     }

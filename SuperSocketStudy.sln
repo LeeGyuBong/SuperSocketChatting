@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocketStudy", "SuperSocketStudy\SuperSocketStudy.csproj", "{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuperSocketClient", "SuperSocketClient\SuperSocketClient.csproj", "{003B0CD5-DEC8-40AE-8306-F3008203FF82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocketClient", "SuperSocketClient\SuperSocketClient.csproj", "{003B0CD5-DEC8-40AE-8306-F3008203FF82}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocketServer", "SuperSocketServer\SuperSocketServer.csproj", "{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,16 +17,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|x64.ActiveCfg = Debug|x64
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|x64.Build.0 = Debug|x64
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|x86.ActiveCfg = Debug|x86
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|x86.Build.0 = Debug|x86
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|Any CPU.ActiveCfg = Release|x64
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|x64.ActiveCfg = Release|x64
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|x64.Build.0 = Release|x64
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|x86.ActiveCfg = Release|x86
-		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|x86.Build.0 = Release|x86
 		{003B0CD5-DEC8-40AE-8306-F3008203FF82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{003B0CD5-DEC8-40AE-8306-F3008203FF82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{003B0CD5-DEC8-40AE-8306-F3008203FF82}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -39,6 +29,18 @@ Global
 		{003B0CD5-DEC8-40AE-8306-F3008203FF82}.Release|x64.Build.0 = Release|Any CPU
 		{003B0CD5-DEC8-40AE-8306-F3008203FF82}.Release|x86.ActiveCfg = Release|Any CPU
 		{003B0CD5-DEC8-40AE-8306-F3008203FF82}.Release|x86.Build.0 = Release|Any CPU
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|Any CPU.Build.0 = Debug|x64
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|x64.ActiveCfg = Debug|x64
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|x64.Build.0 = Debug|x64
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|x86.ActiveCfg = Debug|x86
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Debug|x86.Build.0 = Debug|x86
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|Any CPU.ActiveCfg = Release|x64
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|Any CPU.Build.0 = Release|x64
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|x64.ActiveCfg = Release|x64
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|x64.Build.0 = Release|x64
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|x86.ActiveCfg = Release|x86
+		{AD6717DA-D8F9-4A58-A6A2-587DB9BB7D47}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
