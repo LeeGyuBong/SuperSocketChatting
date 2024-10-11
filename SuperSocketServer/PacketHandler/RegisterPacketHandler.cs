@@ -6,17 +6,20 @@ using System.Collections.Generic;
 
 namespace SuperSocketServer.Network.TCP
 {
-    // 패킷이 많아지면 Server.cs의 가독성이 떨어질 수 있음
-    // 그래서 패킷 등록 부분만 따로 분리함
-    public partial class MyServer : AppServer<MySession, MyBinaryRequestInfo>
+    // 패킷이 많아지면 Server.cs의 가독성이 떨어질 수 있기에 패킷 등록 부분만 따로 분리
+    public partial class MyTcpServer : AppServer<MyTcpSession, MyBinaryRequestInfo>
     {
-        Dictionary<int, Action<MySession, MyBinaryRequestInfo>> __handlerMap = new Dictionary<int, Action<MySession, MyBinaryRequestInfo>>();
+        Dictionary<int, Action<MyTcpSession, MyBinaryRequestInfo>> __handlerMap = new Dictionary<int, Action<MyTcpSession, MyBinaryRequestInfo>>();
         CommonHandler __commonHanlder = new CommonHandler();
 
         void RegistHandler()
         {
-            // TODO : 패킷 추가되면 아래에 추가해 나갈 것
+            // TODO : 패킷 추가되면 각 핸들러에 맞는 함수에 추가해 나갈 것
+            CommonHandler();
+        }
 
+        void CommonHandler()
+        {
             __handlerMap.Add((int)PacketID.PacketID_DummyChatReq, __commonHanlder.RequestDummyChat);
         }
     }

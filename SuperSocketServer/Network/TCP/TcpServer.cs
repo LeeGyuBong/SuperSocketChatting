@@ -8,16 +8,16 @@ namespace SuperSocketServer.Network.TCP
 {
     // SuperSocket을 사용한 TCP 서버
     // 모든 AppSession 객체를 관리, SuperSocket의 몸통
-    public partial class MyServer : AppServer<MySession, MyBinaryRequestInfo>
+    public partial class MyTcpServer : AppServer<MyTcpSession, MyBinaryRequestInfo>
     {
         IServerConfig __config;
 
-        public MyServer()
+        public MyTcpServer()
             : base(new DefaultReceiveFilterFactory<ReceiveFilter, MyBinaryRequestInfo>())
         {
-            NewSessionConnected += new SessionHandler<MySession>(OnConnected);
-            SessionClosed += new SessionHandler<MySession, CloseReason>(OnClosed);
-            NewRequestReceived += new RequestHandler<MySession, MyBinaryRequestInfo>(RequestReceived);
+            NewSessionConnected += new SessionHandler<MyTcpSession>(OnConnected);
+            SessionClosed += new SessionHandler<MyTcpSession, CloseReason>(OnClosed);
+            NewRequestReceived += new RequestHandler<MyTcpSession, MyBinaryRequestInfo>(RequestReceived);
         }
 
         public bool InitConfig()
@@ -55,17 +55,17 @@ namespace SuperSocketServer.Network.TCP
             }
         }
 
-        static void OnConnected(MySession session)
+        static void OnConnected(MyTcpSession session)
         {
             Console.WriteLine($"세션 {session.SessionID} 접속.");
         }
 
-        static void OnClosed(MySession session, CloseReason reason)
+        static void OnClosed(MyTcpSession session, CloseReason reason)
         {
             Console.WriteLine($"세션 {session.SessionID} 접속 해제 : {reason}");
         }
 
-        void RequestReceived(MySession session, MyBinaryRequestInfo requestInfo)
+        void RequestReceived(MyTcpSession session, MyBinaryRequestInfo requestInfo)
         {
             if (__handlerMap.TryGetValue(requestInfo.Head, out var Value))
             {
@@ -73,7 +73,7 @@ namespace SuperSocketServer.Network.TCP
             }
             else
             {
-                Console.WriteLine($"세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
+                Console.WriteLine($"Handler Not Exist! 세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
             }
         }
     }

@@ -161,11 +161,11 @@
     <Compile Include="PacketHandler\RegisterPacketHandler.cs" />
     <Compile Include="Packet\PacketDefine.cs" />
     <Compile Include="Packet\PacketData.cs" />
-    <Compile Include="Network\TCP\PacketReceive.cs" />
+    <Compile Include="Network\TCP\TcpPacketReceive.cs" />
     <Compile Include="Main\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Network\TCP\Session.cs" />
-    <Compile Include="Network\TCP\Server.cs" />
+    <Compile Include="Network\TCP\TcpSession.cs" />
+    <Compile Include="Network\TCP\TcpServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

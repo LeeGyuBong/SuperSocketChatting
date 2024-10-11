@@ -7,7 +7,7 @@ namespace SuperSocketServer.PacketHandler
 {
     public class CommonHandler
     {
-        public void RequestDummyChat(MySession session, MyBinaryRequestInfo reqInfo)
+        public void RequestDummyChat(MyTcpSession session, MyBinaryRequestInfo reqInfo)
         {
             string jsonString = Encoding.GetEncoding("UTF-8").GetString(reqInfo.Body);
             if (jsonString.Length <= 0)
@@ -15,11 +15,6 @@ namespace SuperSocketServer.PacketHandler
 
             var packet = JsonConvert.DeserializeObject<PK_CHAT>(jsonString);
             session.Send(packet.Sender + " : " + packet.Message);
-        }
-
-        public void RequestLogin(MySession session, MyBinaryRequestInfo reqInfo)
-        {
-
         }
     }
 }
