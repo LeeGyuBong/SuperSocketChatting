@@ -6,6 +6,20 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Packet\PacketData.cs" Link="Packet\PacketData.cs" />
+    <Compile Include="..\Packet\PacketDefine.cs" Link="Packet\PacketDefine.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Packet\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MessagePack" Version="2.5.172" />
+  </ItemGroup>
 
 </Project>

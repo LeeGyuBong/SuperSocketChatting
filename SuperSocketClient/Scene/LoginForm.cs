@@ -17,7 +17,7 @@ namespace SuperSocketClient.Scene
             if (__player == null)
             {
                 // 플레이어 생성
-                __player = new Player();
+                __player = new Player("Tester");
             }
             
             // 소켓 연결 시작

@@ -90,6 +90,7 @@ namespace SuperSocketClient.Network
         {
             if(socket != null && socket.Connected) 
             {
+                socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
             }
         }

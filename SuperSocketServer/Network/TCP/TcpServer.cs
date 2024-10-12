@@ -1,23 +1,27 @@
-﻿using SuperSocket.SocketBase;
+﻿using MessagePack;
+using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Protocol;
+using SuperSocketShared.Packet;
 using System;
 
 namespace SuperSocketServer.Network.TCP
 {
     // SuperSocket을 사용한 TCP 서버
     // 모든 AppSession 객체를 관리, SuperSocket의 몸통
-    public partial class MyTcpServer : AppServer<MyTcpSession, MyBinaryRequestInfo>
+    public partial class MyTcpServer : AppServer<MyTcpSession, BinaryRequestInfo>
     {
         IServerConfig __config;
 
+        public int MaxPacketSize = 65536;
+
         public MyTcpServer()
-            : base(new DefaultReceiveFilterFactory<ReceiveFilter, MyBinaryRequestInfo>())
+            : base(new DefaultReceiveFilterFactory<ReceiveFilter, BinaryRequestInfo>())
         {
-            NewSessionConnected += new SessionHandler<MyTcpSession>(OnConnected);
-            SessionClosed += new SessionHandler<MyTcpSession, CloseReason>(OnClosed);
-            NewRequestReceived += new RequestHandler<MyTcpSession, MyBinaryRequestInfo>(RequestReceived);
+            //NewSessionConnected += new SessionHandler<MyTcpSession>(OnConnected);
+            //SessionClosed += new SessionHandler<MyTcpSession, CloseReason>(OnClosed);
+            NewRequestReceived += new RequestHandler<MyTcpSession, BinaryRequestInfo>(RequestReceived);
         }
 
         public bool InitConfig()
@@ -55,25 +59,29 @@ namespace SuperSocketServer.Network.TCP
             }
         }
 
-        static void OnConnected(MyTcpSession session)
-        {
-            Console.WriteLine($"세션 {session.SessionID} 접속.");
-        }
+        //static void OnConnected(MyTcpSession session)
+        //{
+        //    Console.WriteLine($"세션 {session.SessionID} 접속.");
+        //}
 
-        static void OnClosed(MyTcpSession session, CloseReason reason)
-        {
-            Console.WriteLine($"세션 {session.SessionID} 접속 해제 : {reason}");
-        }
+        //static void OnClosed(MyTcpSession session, CloseReason reason)
+        //{
+        //    Console.WriteLine($"세션 {session.SessionID} 접속 해제 : {reason}");
+        //}
 
-        void RequestReceived(MyTcpSession session, MyBinaryRequestInfo requestInfo)
+        void RequestReceived(MyTcpSession session, BinaryRequestInfo requestInfo)
         {
-            if (__handlerMap.TryGetValue(requestInfo.Head, out var Value))
+            SocketPacket packet = new SocketPacket(requestInfo.Body);
+            if(packet != null)
             {
-                Value(session, requestInfo);
-            }
-            else
-            {
-                Console.WriteLine($"Handler Not Exist! 세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
+                if (__handlerMap.TryGetValue(packet.Type, out var Value))
+                {
+                    Value(session, packet.Data);
+                }
+                else
+                {
+                    Console.WriteLine($"Handler Not Exist! 세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
+                }
             }
         }
     }

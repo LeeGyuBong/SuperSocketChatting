@@ -1,9 +1,6 @@
-﻿using SuperSocketClient.Network;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MessagePack;
+using SuperSocketClient.Network;
+using SuperSocketShared.Packet;
 
 namespace SuperSocketClient.Object
 {
@@ -11,13 +8,19 @@ namespace SuperSocketClient.Object
     {
         private readonly TcpConnection __tcpConnection = new TcpConnection();
 
-        public Player() 
-        {
+        public string Name { get; init; }
+
+        public Player(string name) 
+        {   
+            Name = name;
         }
 
         ~Player()
         {
-            Logout();
+            if (__tcpConnection.IsConnected())
+            {
+                __tcpConnection.Close();
+            }
         }
 
         public bool Login(string ip, int port)
@@ -37,6 +40,37 @@ namespace SuperSocketClient.Object
             {
                 __tcpConnection.Close();
             }
+        }
+
+        private void SendPacket<T>(PacketID packetID, T packetObj)
+        {
+            if(__tcpConnection.IsConnected() && packetObj != null)
+            {
+                SocketPacket packet = new SocketPacket((int)packetID);
+                packet.Data = Convert.ToBase64String(MessagePackSerializer.Serialize(packetObj));
+
+                byte[] buffer = packet.GetBytes();
+                if (buffer != null)
+                {
+                    __tcpConnection.Send(buffer);
+                }
+            }
+        }
+
+        public void SendChat(string message)
+        {
+            if(__tcpConnection.IsConnected() == false)
+            {
+                return;
+            }
+
+            var packetBody = new PKSendChatMessage()
+            {
+               Sender = Name,
+               Message = message
+            };
+
+            SendPacket(PacketID.DummyChatReq, packetBody);
         }
     }
 }

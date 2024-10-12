@@ -1,20 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿using MessagePack;
+using Newtonsoft.Json;
 using SuperSocketServer.Network.TCP;
-using SuperSocketServer.Packet;
+using SuperSocketShared.Packet;
+using System;
+using System.Net.Sockets;
 using System.Text;
 
 namespace SuperSocketServer.PacketHandler
 {
     public class CommonHandler
     {
-        public void RequestDummyChat(MyTcpSession session, MyBinaryRequestInfo reqInfo)
+        public void RequestDummyChat(MyTcpSession session, string packetData)
         {
-            string jsonString = Encoding.GetEncoding("UTF-8").GetString(reqInfo.Body);
-            if (jsonString.Length <= 0)
-                return;
-
-            var packet = JsonConvert.DeserializeObject<PK_CHAT>(jsonString);
-            session.Send(packet.Sender + " : " + packet.Message);
+            PKSendChatMessage packet = MessagePackSerializer.Deserialize<PKSendChatMessage>(Convert.FromBase64String(packetData));
+            if(packet != null)
+            {
+                Console.WriteLine($"[{packet.Sender}] Message : {packet.Message}");
+            }
         }
     }
 }

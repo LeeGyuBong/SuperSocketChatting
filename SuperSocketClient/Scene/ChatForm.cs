@@ -46,9 +46,18 @@ namespace SuperSocketClient.Scene
             {
                 e.SuppressKeyPress = true;
 
-                DateTime now = DateTime.Now;
+                if (__player != null)
+                {
+                    __player.SendChat(ChatInputTextBox.Text);
+                }
+                else
+                {
+                    LogoutReq_Click(sender, e);
+                }
 
-                ChatBoradTextBox.AppendText($"[{now.Hour}:{now.Minute}:{now.Second}] {ChatInputTextBox.Text}\r\n");
+                //DateTime now = DateTime.Now;
+                //ChatBoradTextBox.AppendText($"[{now.Hour}:{now.Minute}:{now.Second}] {ChatInputTextBox.Text}\r\n");
+
                 ChatInputTextBox.Clear();
             }
         }

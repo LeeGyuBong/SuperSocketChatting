@@ -1,43 +1,36 @@
 ﻿using SuperSocket.Common;
 using SuperSocket.Facility.Protocol;
 using SuperSocket.SocketBase.Protocol;
+using SuperSocketShared.Packet;
 using System;
 
 namespace SuperSocketServer.Network.TCP
 {
-    public class MyBinaryRequestInfo : BinaryRequestInfo
+    class ReceiveFilter : FixedHeaderReceiveFilter<BinaryRequestInfo>
     {
-        public int Head { get; private set; }
-
-        public MyBinaryRequestInfo(int key, byte[] body)
-            : base(null, body)
-        {
-            Head = key;
-        }
-    }
-
-    class ReceiveFilter : FixedHeaderReceiveFilter<MyBinaryRequestInfo>
-    {
-        public ReceiveFilter() : base(8) { }/*Header 4Byte + Length 4Byte로 헤더 전체는 8Byte*/
-
-        protected override int GetBodyLengthFromHeader(byte[] header, int offset/*헤더의 시작 지점*/, int length)
-        {
-            if (BitConverter.IsLittleEndian == false)
-            {
-                Array.Reverse(header, offset + 4, 4); // 헤더의 Length부분만 리틀 엔디안이면 빅 엔디안으로 변환
-            }
-
-            return BitConverter.ToInt32(header, offset + 4); // 헤더의 Length의 시작 메모리지점부터 32bit의 값만 가져온다 // Length값을 가져온다
+        public ReceiveFilter() 
+            : base(SocketPacket.PACKET_LENGTH_SIZE) 
+        { 
         }
 
-        protected override MyBinaryRequestInfo ResolveRequestInfo(ArraySegment<byte> header, byte[] bodyBuffer, int offset, int length)
+        protected override int GetBodyLengthFromHeader(byte[] bytes, int offset, int length)
         {
-            if (BitConverter.IsLittleEndian == false)
-            {
-                Array.Reverse(header.Array, 0, 4);
-            }
+            //if (BitConverter.IsLittleEndian == false)
+            //{
+            //    Array.Reverse(bytes, offset + 4, 4);
+            //}
 
-            return new MyBinaryRequestInfo(BitConverter.ToInt32(header.Array, 0), bodyBuffer.CloneRange(offset, length));
+            return BitConverter.ToInt32(bytes, offset);
+        }
+
+        protected override BinaryRequestInfo ResolveRequestInfo(ArraySegment<byte> bytes, byte[] bodyBuffer, int offset, int length)
+        {
+            //if (BitConverter.IsLittleEndian == false)
+            //{
+            //    Array.Reverse(bytes.Array, 0, 4);
+            //}
+
+            return new BinaryRequestInfo(null, bodyBuffer.CloneRange(offset, length));
         }
     }
 }

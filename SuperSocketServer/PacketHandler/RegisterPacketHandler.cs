@@ -1,16 +1,17 @@
 ﻿using SuperSocket.SocketBase;
-using SuperSocketServer.Packet;
+using SuperSocket.SocketBase.Protocol;
 using SuperSocketServer.PacketHandler;
+using SuperSocketShared.Packet;
 using System;
 using System.Collections.Generic;
 
 namespace SuperSocketServer.Network.TCP
 {
     // 패킷이 많아지면 Server.cs의 가독성이 떨어질 수 있기에 패킷 등록 부분만 따로 분리
-    public partial class MyTcpServer : AppServer<MyTcpSession, MyBinaryRequestInfo>
+    public partial class MyTcpServer : AppServer<MyTcpSession, BinaryRequestInfo>
     {
-        Dictionary<int, Action<MyTcpSession, MyBinaryRequestInfo>> __handlerMap = new Dictionary<int, Action<MyTcpSession, MyBinaryRequestInfo>>();
-        CommonHandler __commonHanlder = new CommonHandler();
+        Dictionary<int, Action<MyTcpSession, string>> __handlerMap = new Dictionary<int, Action<MyTcpSession, string>>();
+        CommonHandler __commonHandler = new CommonHandler();
 
         void RegistHandler()
         {
@@ -20,7 +21,7 @@ namespace SuperSocketServer.Network.TCP
 
         void CommonHandler()
         {
-            __handlerMap.Add((int)PacketID.PacketID_DummyChatReq, __commonHanlder.RequestDummyChat);
+            __handlerMap.Add((int)PacketID.DummyChatReq, __commonHandler.RequestDummyChat);
         }
     }
 }
