@@ -1,25 +1,37 @@
-﻿namespace SuperSocketClient.Scene
+﻿using SuperSocketClient.Object;
+
+namespace SuperSocketClient.Scene
 {
     public partial class ChatForm : Form
     {
-        public ChatForm()
+        private LoginForm? __loginForm = null;
+        private Player? __player = null;
+
+        public ChatForm(Player player)
         {
             InitializeComponent();
 
-            ChatBoradTextBox.Select(ChatBoradTextBox.Text.Length, 0);
-            ChatBoradTextBox.ScrollToCaret();
+            __player = player;
+
+            //ChatBoradTextBox.Select(ChatBoradTextBox.Text.Length, 0);
+            //ChatBoradTextBox.ScrollToCaret();
         }
 
         private void LogoutReq_Click(object sender, EventArgs e)
         {
-            var loginForm = (LoginForm)Tag;
+            LoginForm loginForm = (LoginForm)Tag;
             if (loginForm == null)
             {
-                // ErrorMessage
                 return;
             }
 
-            // 로그아웃 성공. 로그인 폼 출력
+            // 플레이어 로그아웃
+            if (__player != null)
+            {
+                __player.Logout();
+            }
+
+            // 로그인 폼 출력
             loginForm.Show();
 
             // 채팅 폼 감추기
@@ -38,6 +50,14 @@
 
                 ChatBoradTextBox.AppendText($"[{now.Hour}:{now.Minute}:{now.Second}] {ChatInputTextBox.Text}\r\n");
                 ChatInputTextBox.Clear();
+            }
+        }
+
+        private void ChatForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (__player != null)
+            {
+                __player.Logout();
             }
         }
     }

@@ -49,6 +49,7 @@
             Controls.Add(LoginReq);
             Name = "LoginForm";
             Text = "SuperSocketClient_Login";
+            FormClosing += LoginForm_FormClosing;
             ResumeLayout(false);
         }
 

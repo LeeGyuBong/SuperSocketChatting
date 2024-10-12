@@ -1,3 +1,4 @@
+using SuperSocketClient.Object;
 using SuperSocketClient.Scene;
 
 namespace SuperSocketClient.Main

@@ -70,6 +70,7 @@
             Controls.Add(LogoutReq);
             Name = "ChatForm";
             Text = "SuperSocketClient_Chat";
+            FormClosing += ChatForm_FormClosing;
             ResumeLayout(false);
             PerformLayout();
         }
