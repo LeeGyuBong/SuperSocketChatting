@@ -89,8 +89,8 @@ namespace SuperSocketShared.Packet
     public class PKSendChatMessage
     {
         [Key(0)]
-        public string Sender { get; set; }
+        public string Sender { get; set; } = string.Empty;
         [Key(1)]
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
     }
 }
