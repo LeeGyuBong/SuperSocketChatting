@@ -10,6 +10,7 @@
 클라이언트 사용버전   
 ```
 .NET 6.0
+SuperSocket.ClientEngine v0.10.0
 ```
 
 서버 사용버전
