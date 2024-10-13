@@ -21,7 +21,7 @@ namespace SuperSocketServer.Network.TCP
         {
             //NewSessionConnected += new SessionHandler<MyTcpSession>(OnConnected);
             //SessionClosed += new SessionHandler<MyTcpSession, CloseReason>(OnClosed);
-            NewRequestReceived += new RequestHandler<MyTcpSession, BinaryRequestInfo>(RequestReceived);
+            NewRequestReceived += new RequestHandler<MyTcpSession, BinaryRequestInfo>(OnRequestReceived);
         }
 
         public bool InitConfig()
@@ -69,18 +69,21 @@ namespace SuperSocketServer.Network.TCP
         //    Console.WriteLine($"세션 {session.SessionID} 접속 해제 : {reason}");
         //}
 
-        void RequestReceived(MyTcpSession session, BinaryRequestInfo requestInfo)
+        void OnRequestReceived(MyTcpSession session, BinaryRequestInfo requestInfo)
         {
-            SocketPacket packet = new SocketPacket(requestInfo.Body);
-            if(packet != null)
+            if (requestInfo.Body.Length <= MaxPacketSize)
             {
-                if (__handlerMap.TryGetValue(packet.Type, out var Value))
+                SocketPacket packet = new SocketPacket(requestInfo.Body);
+                if (packet != null)
                 {
-                    Value(session, packet.Data);
-                }
-                else
-                {
-                    Console.WriteLine($"Handler Not Exist! 세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
+                    if (__handlerMap.TryGetValue(packet.Type, out var Value))
+                    {
+                        Value(session, packet.Data);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Handler Not Exist! 세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
+                    }
                 }
             }
         }

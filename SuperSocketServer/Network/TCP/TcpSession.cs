@@ -42,7 +42,7 @@ namespace SuperSocketServer.Network.TCP
                     byte[] buffer = packet.GetBytes();
                     if (buffer != null)
                     {
-                        Send(buffer, 0, buffer.Length);
+                        TrySend(new ArraySegment<byte>(buffer));
                     }
                 }
                 catch (Exception)

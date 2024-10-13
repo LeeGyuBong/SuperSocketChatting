@@ -1,11 +1,14 @@
+using SuperSocketClient.Main;
 using SuperSocketClient.Object;
 
 namespace SuperSocketClient.Scene
 {
     public partial class LoginForm : Form
     {
+        //private readonly SceneManager __sceneManager;
+
         private ChatForm? __chatForm = null;
-        private Player? __player = null;
+        private Client? __client = null;
 
         public LoginForm()
         {
@@ -14,14 +17,14 @@ namespace SuperSocketClient.Scene
 
         private void LoginReq_Click(object sender, EventArgs e)
         {
-            if (__player == null)
+            if (__client == null)
             {
                 // 플레이어 생성
-                __player = new Player("Tester");
+                __client = new Client("Tester");
             }
             
             // 소켓 연결 시작
-            if (__player.Login("127.0.0.1", 11021) == false)
+            if (__client.Login() == false)
             {
                 return; // 연결 실패
             }
@@ -31,7 +34,7 @@ namespace SuperSocketClient.Scene
             // 채팅 폼 생성 및 전환
             if (__chatForm == null)
             {
-                __chatForm = new ChatForm(__player);
+                __chatForm = new ChatForm(__client);
                 __chatForm.Tag = this;
             }
 
@@ -43,7 +46,7 @@ namespace SuperSocketClient.Scene
 
         private void LoginForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            __player?.Logout();
+            __client?.Logout();
         }
     }
 }

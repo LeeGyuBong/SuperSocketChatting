@@ -4,14 +4,13 @@ namespace SuperSocketClient.Scene
 {
     public partial class ChatForm : Form
     {
-        private LoginForm? __loginForm = null;
-        private Player? __player = null;
+        private Client? __client = null;
 
-        public ChatForm(Player player)
+        public ChatForm(Client client)
         {
             InitializeComponent();
 
-            __player = player;
+            __client = client;
 
             //ChatBoradTextBox.Select(ChatBoradTextBox.Text.Length, 0);
             //ChatBoradTextBox.ScrollToCaret();
@@ -26,9 +25,9 @@ namespace SuperSocketClient.Scene
             }
 
             // 플레이어 로그아웃
-            if (__player != null)
+            if (__client != null)
             {
-                __player.Logout();
+                __client.Logout();
             }
 
             // 로그인 폼 출력
@@ -46,9 +45,9 @@ namespace SuperSocketClient.Scene
             {
                 e.SuppressKeyPress = true;
 
-                if (__player != null)
+                if (__client != null)
                 {
-                    __player.SendChat(ChatInputTextBox.Text);
+                    __client.SendChat(ChatInputTextBox.Text);
                 }
                 else
                 {
@@ -64,9 +63,9 @@ namespace SuperSocketClient.Scene
 
         private void ChatForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (__player != null)
+            if (__client != null)
             {
-                __player.Logout();
+                __client.Logout();
             }
         }
     }

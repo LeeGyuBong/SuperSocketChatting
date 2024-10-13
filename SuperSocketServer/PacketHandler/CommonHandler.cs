@@ -16,6 +16,12 @@ namespace SuperSocketServer.PacketHandler
             if(packet != null)
             {
                 Console.WriteLine($"[{packet.Sender}] Message : {packet.Message}");
+
+                PKSendChatMessage pKSendChatMessage = new PKSendChatMessage();
+                pKSendChatMessage.Sender = packet.Sender;
+                pKSendChatMessage.Message = packet.Message;
+
+                session.SendPacket(PacketID.DummyChatReq, pKSendChatMessage);
             }
         }
     }
