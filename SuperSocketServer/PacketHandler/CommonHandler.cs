@@ -22,6 +22,8 @@ namespace SuperSocketServer.PacketHandler
                 pKSendChatMessage.Message = packet.Message;
 
                 session.SendPacket(PacketID.DummyChatReq, pKSendChatMessage);
+
+                // TODO : MyTcpServer를 가져와서 브로드캐스팅으로 변경
             }
         }
     }

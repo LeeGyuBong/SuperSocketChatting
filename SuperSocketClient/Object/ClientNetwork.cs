@@ -198,12 +198,12 @@ namespace SuperSocketClient.Object
             if (packet == null)
                 return;
 
-            switch((PacketID)packet.Type)
+            switch ((PacketID)packet.Type)
             {
                 case PacketID.DummyChatReq:
                     {
                         PKSendChatMessage pkSendChatMessage = MessagePackSerializer.Deserialize<PKSendChatMessage>(Convert.FromBase64String(packet.Data));
-                        if(pkSendChatMessage != null)
+                        if (pkSendChatMessage != null)
                         {
                             var a = pkSendChatMessage.Sender;
                             var b = pkSendChatMessage.Message;
