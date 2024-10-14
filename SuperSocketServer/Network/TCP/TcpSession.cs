@@ -47,7 +47,7 @@ namespace SuperSocketServer.Network.TCP
                 }
                 catch (Exception)
                 {
-                    
+
                 }
             }
         }

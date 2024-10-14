@@ -27,7 +27,7 @@ namespace SuperSocketClient.Scene
             {
                 e.SuppressKeyPress = true;
 
-                Client client = FormManager.Instance().Client;
+                Client client = FormManager.Instance.Client;
                 if (client != null)
                 {
                     client.SendChat(ChatInputTextBox.Text);
@@ -65,13 +65,13 @@ namespace SuperSocketClient.Scene
 
         private void FormClose()
         {
-            Client client = FormManager.Instance().Client;
+            Client client = FormManager.Instance.Client;
             if (client != null)
             {
                 client.Logout();
             }
 
-            var formManager = FormManager.Instance();
+            var formManager = FormManager.Instance;
 
             // 채팅폼을 폼 매니저에서 삭제
             formManager.RemoveForm(FormType.Chat);

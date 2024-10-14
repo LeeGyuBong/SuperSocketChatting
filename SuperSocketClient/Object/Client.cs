@@ -1,5 +1,4 @@
 ﻿using MessagePack;
-using SuperSocketClient.Network;
 using SuperSocketClient.Scene;
 using SuperSocketShared.Packet;
 
@@ -78,7 +77,7 @@ namespace SuperSocketClient.Object
                         PKSendChatMessage pkSendChatMessage = MessagePackSerializer.Deserialize<PKSendChatMessage>(Convert.FromBase64String(packet.Data));
                         if (pkSendChatMessage != null)
                         {
-                            ChatForm chatForm = FormManager.Instance().GetForm(FormType.Chat) as ChatForm;
+                            ChatForm chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
                             if (chatForm != null)
                             {
                                 chatForm.BoradCastChatBox(pkSendChatMessage.Sender, pkSendChatMessage.Message);

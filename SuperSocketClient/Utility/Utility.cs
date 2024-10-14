@@ -1,24 +1,23 @@
-﻿using SuperSocketClient.Scene;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SuperSocketClient.Utility
+﻿namespace SuperSocketClient.Utility
 {
     public class Singleton<T> where T : class, new()
     {
-        static volatile T __instance;
-        static object __lock = new object();
+        private static volatile T __instance = null;
+        private static object __lock = new object();
 
-        public static T Instance()
+        public static T Instance
         {
-            lock (__lock)
+            get
             {
                 if (__instance == null)
                 {
-                    __instance = new T();
+                    lock (__lock)
+                    {
+                        if (__instance == null)
+                        {
+                            __instance = new T();
+                        }
+                    }
                 }
                 return __instance;
             }

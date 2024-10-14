@@ -5,7 +5,7 @@ using System.Net.Sockets;
 
 namespace SuperSocketClient.Network
 {
-    public abstract class TcpConnection 
+    public abstract class TcpConnection
     {
         public Socket? socket = null;
         public string LatestErrorMsg = "";
@@ -55,7 +55,7 @@ namespace SuperSocketClient.Network
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LatestErrorMsg = ex.Message;
                 return false;
@@ -73,14 +73,14 @@ namespace SuperSocketClient.Network
 
                 byte[] buffer = new byte[65536];
                 var receiveSize = socket.Receive(buffer, 0, buffer.Length, SocketFlags.None);
-                if(receiveSize == 0)
+                if (receiveSize == 0)
                 {
                     return null;
                 }
 
                 return Tuple.Create(receiveSize, buffer);
             }
-            catch(SocketException se)
+            catch (SocketException se)
             {
                 LatestErrorMsg = se.Message;
             }
@@ -144,7 +144,7 @@ namespace SuperSocketClient.Network
 
         protected abstract void PacketProcess(SocketPacket packet);
 
-        private void Send(byte[] sendBuffer) 
+        private void Send(byte[] sendBuffer)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace SuperSocketClient.Network
 
         protected void Close()
         {
-            if (IsConnected) 
+            if (IsConnected)
             {
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();

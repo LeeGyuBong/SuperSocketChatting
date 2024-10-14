@@ -8,9 +8,9 @@ namespace SuperSocketServer.Network.TCP
 {
     class ReceiveFilter : FixedHeaderReceiveFilter<BinaryRequestInfo>
     {
-        public ReceiveFilter() 
-            : base(SocketPacket.PACKET_LENGTH_SIZE) 
-        { 
+        public ReceiveFilter()
+            : base(SocketPacket.PACKET_LENGTH_SIZE)
+        {
         }
 
         protected override int GetBodyLengthFromHeader(byte[] bytes, int offset, int length)

@@ -1,4 +1,3 @@
-using SuperSocketClient.Main;
 using SuperSocketClient.Object;
 
 namespace SuperSocketClient.Scene
@@ -18,7 +17,7 @@ namespace SuperSocketClient.Scene
 
         private void LoginReq_Click(object sender, EventArgs e)
         {
-            Client client = FormManager.Instance().Client;
+            Client client = FormManager.Instance.Client;
             if (client.IsInit == false)
             {
                 // 플레이어 생성
@@ -34,7 +33,7 @@ namespace SuperSocketClient.Scene
             // TODO : 로그인 패킷 전송
 
             // 채팅 폼 생성 및 전환
-            ChatForm chatForm = FormManager.Instance().GetForm(FormType.Chat) as ChatForm;
+            ChatForm chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
             if (chatForm == null)
             {
                 return;

@@ -47,7 +47,7 @@ namespace SuperSocketClient.Object
                 {
                     __tcpSession.Connect(new IPEndPoint(IPAddress.Parse(__connectionIP), __connectionPort));
                 }
-                
+
                 return true;
             }
             catch (Exception ex)

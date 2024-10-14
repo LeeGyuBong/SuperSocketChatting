@@ -44,7 +44,8 @@ namespace SuperSocketShared.Packet
             Type = type;
             Data = string.Empty;
         }
-        public SocketPacket(int type, string data) {
+        public SocketPacket(int type, string data)
+        {
             Type = type;
             Data = data;
         }

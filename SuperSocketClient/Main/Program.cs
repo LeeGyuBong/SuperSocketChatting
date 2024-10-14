@@ -1,4 +1,3 @@
-using SuperSocketClient.Object;
 using SuperSocketClient.Scene;
 
 namespace SuperSocketClient.Main
@@ -15,8 +14,8 @@ namespace SuperSocketClient.Main
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            Form loginForm = FormManager.Instance().GetForm(FormType.Login);
-            if(loginForm != null)
+            Form loginForm = FormManager.Instance.GetForm(FormType.Login);
+            if (loginForm != null)
             {
                 Application.Run(loginForm);
             }
