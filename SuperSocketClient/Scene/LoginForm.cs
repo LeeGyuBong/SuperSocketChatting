@@ -5,26 +5,28 @@ namespace SuperSocketClient.Scene
 {
     public partial class LoginForm : Form
     {
-        //private readonly SceneManager __sceneManager;
-
-        private ChatForm? __chatForm = null;
-        private Client? __client = null;
-
         public LoginForm()
         {
             InitializeComponent();
+
+#if LOCAL_SOCKET
+            NetworkTypeLabel.Text = "Net.Socket";
+#else
+            NetworkTypeLabel.Text = "SuperSocket";
+#endif
         }
 
         private void LoginReq_Click(object sender, EventArgs e)
         {
-            if (__client == null)
+            Client client = FormManager.Instance().Client;
+            if (client.IsInit == false)
             {
                 // 플레이어 생성
-                __client = new Client("Tester");
+                client.Init("Tester");
             }
-            
+
             // 소켓 연결 시작
-            if (__client.Login() == false)
+            if (client.Login() == false)
             {
                 return; // 연결 실패
             }
@@ -32,13 +34,13 @@ namespace SuperSocketClient.Scene
             // TODO : 로그인 패킷 전송
 
             // 채팅 폼 생성 및 전환
-            if (__chatForm == null)
+            ChatForm chatForm = FormManager.Instance().GetForm(FormType.Chat) as ChatForm;
+            if (chatForm == null)
             {
-                __chatForm = new ChatForm(__client);
-                __chatForm.Tag = this;
+                return;
             }
 
-            __chatForm.Show();
+            chatForm.Show();
 
             // 로그인 폼 감추기
             Hide();
@@ -46,7 +48,7 @@ namespace SuperSocketClient.Scene
 
         private void LoginForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            __client?.Logout();
+            //__client?.Logout();
         }
     }
 }

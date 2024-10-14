@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             LoginReq = new Button();
+            NetworkTypeLabel = new Label();
             SuspendLayout();
             // 
             // LoginReq
@@ -41,20 +42,31 @@
             LoginReq.UseVisualStyleBackColor = true;
             LoginReq.Click += LoginReq_Click;
             // 
+            // NetworkTypeLabel
+            // 
+            NetworkTypeLabel.AutoSize = true;
+            NetworkTypeLabel.Location = new Point(12, 9);
+            NetworkTypeLabel.Name = "NetworkTypeLabel";
+            NetworkTypeLabel.Size = new Size(0, 15);
+            NetworkTypeLabel.TabIndex = 1;
+            // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(NetworkTypeLabel);
             Controls.Add(LoginReq);
             Name = "LoginForm";
             Text = "SuperSocketClient_Login";
             FormClosing += LoginForm_FormClosing;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private Button LoginReq;
+        private Label NetworkTypeLabel;
     }
 }

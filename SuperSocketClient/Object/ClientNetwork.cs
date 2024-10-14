@@ -5,7 +5,7 @@ using System.Net;
 
 namespace SuperSocketClient.Object
 {
-    public partial class Client
+    public abstract class ClientSession
     {
         private string __connectionIP = "127.0.0.1";
         private int __connectionPort = 11021;
@@ -22,12 +22,12 @@ namespace SuperSocketClient.Object
             get
             {
                 return __tcpSession != null && __tcpSession.IsConnected;
-            } 
+            }
         }
 
-        public bool Connected()
+        protected bool Connected()
         {
-            try
+            if (__tcpSession == null)
             {
                 __tcpSession = new AsyncTcpSession
                 {
@@ -39,9 +39,15 @@ namespace SuperSocketClient.Object
                 __tcpSession.DataReceived += OnDataReceive;
                 __tcpSession.Closed += OnClosed;
                 __tcpSession.Error += OnError;
+            }
 
-                __tcpSession.Connect(new IPEndPoint(IPAddress.Parse(__connectionIP), __connectionPort));
-
+            try
+            {
+                if (__tcpSession.IsConnected == false)
+                {
+                    __tcpSession.Connect(new IPEndPoint(IPAddress.Parse(__connectionIP), __connectionPort));
+                }
+                
                 return true;
             }
             catch (Exception ex)
@@ -85,7 +91,7 @@ namespace SuperSocketClient.Object
         private void ReceiveHeader(byte[] readBuffer, int offset, int length)
         {
             int rest = __receivedSize + length - SocketPacket.PACKET_LENGTH_SIZE;
-            if(rest >= 0)
+            if (rest >= 0)
             {
                 if (__header == null)
                 {
@@ -113,7 +119,7 @@ namespace SuperSocketClient.Object
             else
             {
                 // 계속 데이터 받아야함
-                if(__receivedSize == 0)
+                if (__receivedSize == 0)
                 {
                     __header = new byte[SocketPacket.PACKET_LENGTH_SIZE];
                 }
@@ -132,7 +138,7 @@ namespace SuperSocketClient.Object
                 Buffer.BlockCopy(readBuffer, offset, __receiveBuffer, __receivedSize, recvLength);
                 __receivedSize += recvLength;
 
-                if(__receivedSize == __packetSize)
+                if (__receivedSize == __packetSize)
                 {
                     __receivedSize = __packetSize = 0;
                     SocketPacket socketPacket = new SocketPacket(__receiveBuffer);
@@ -155,7 +161,7 @@ namespace SuperSocketClient.Object
 
         }
 
-        private void Disconnected()
+        protected void Disconnected()
         {
             if (IsConnected)
             {
@@ -163,7 +169,7 @@ namespace SuperSocketClient.Object
             }
         }
 
-        private void SendPacket<T>(PacketID packetID, T packetObj)
+        protected void SendPacket<T>(PacketID packetID, T packetObj)
         {
             if (IsConnected && packetObj != null)
             {
@@ -193,26 +199,6 @@ namespace SuperSocketClient.Object
             }
         }
 
-        private void PacketProcess(SocketPacket packet)
-        {
-            if (packet == null)
-                return;
-
-            switch ((PacketID)packet.Type)
-            {
-                case PacketID.DummyChatReq:
-                    {
-                        PKSendChatMessage pkSendChatMessage = MessagePackSerializer.Deserialize<PKSendChatMessage>(Convert.FromBase64String(packet.Data));
-                        if (pkSendChatMessage != null)
-                        {
-                            var a = pkSendChatMessage.Sender;
-                            var b = pkSendChatMessage.Message;
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
+        protected abstract void PacketProcess(SocketPacket packet);
     }
 }

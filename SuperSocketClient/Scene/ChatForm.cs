@@ -4,13 +4,9 @@ namespace SuperSocketClient.Scene
 {
     public partial class ChatForm : Form
     {
-        private Client? __client = null;
-
-        public ChatForm(Client client)
+        public ChatForm()
         {
             InitializeComponent();
-
-            __client = client;
 
             //ChatBoradTextBox.Select(ChatBoradTextBox.Text.Length, 0);
             //ChatBoradTextBox.ScrollToCaret();
@@ -18,23 +14,9 @@ namespace SuperSocketClient.Scene
 
         private void LogoutReq_Click(object sender, EventArgs e)
         {
-            LoginForm loginForm = (LoginForm)Tag;
-            if (loginForm == null)
-            {
-                return;
-            }
+            FormClose();
 
-            // 플레이어 로그아웃
-            if (__client != null)
-            {
-                __client.Logout();
-            }
-
-            // 로그인 폼 출력
-            loginForm.Show();
-
-            // 채팅 폼 감추기
-            Hide();
+            Close();
         }
 
         private void ChatInputByPressKeyEnter(object sender, KeyEventArgs e)
@@ -45,17 +27,15 @@ namespace SuperSocketClient.Scene
             {
                 e.SuppressKeyPress = true;
 
-                if (__client != null)
+                Client client = FormManager.Instance().Client;
+                if (client != null)
                 {
-                    __client.SendChat(ChatInputTextBox.Text);
+                    client.SendChat(ChatInputTextBox.Text);
                 }
                 else
                 {
                     LogoutReq_Click(sender, e);
                 }
-
-                //DateTime now = DateTime.Now;
-                //ChatBoradTextBox.AppendText($"[{now.Hour}:{now.Minute}:{now.Second}] {ChatInputTextBox.Text}\r\n");
 
                 ChatInputTextBox.Clear();
             }
@@ -63,9 +43,43 @@ namespace SuperSocketClient.Scene
 
         private void ChatForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (__client != null)
+            FormClose();
+        }
+
+        public void BoradCastChatBox(string sender, string message)
+        {
+            DateTime now = DateTime.Now;
+
+            if (ChatBoradTextBox.InvokeRequired)
             {
-                __client.Logout();
+                ChatBoradTextBox.Invoke(new MethodInvoker(delegate ()
+                {
+                    ChatBoradTextBox.AppendText($"[{now.Hour}:{now.Minute}:{now.Second}] {sender} : {message}\r\n");
+                }));
+            }
+            else
+            {
+                ChatBoradTextBox.AppendText($"[{now.Hour}:{now.Minute}:{now.Second}] {sender} : {message}\r\n");
+            }
+        }
+
+        private void FormClose()
+        {
+            Client client = FormManager.Instance().Client;
+            if (client != null)
+            {
+                client.Logout();
+            }
+
+            var formManager = FormManager.Instance();
+
+            // 채팅폼을 폼 매니저에서 삭제
+            formManager.RemoveForm(FormType.Chat);
+
+            LoginForm loginForm = formManager.GetForm(FormType.Login) as LoginForm;
+            if (loginForm != null)
+            {
+                loginForm.Show();
             }
         }
     }

@@ -9,18 +9,22 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
+
   <ItemGroup>
     <Compile Include="..\Packet\PacketData.cs" Link="Packet\PacketData.cs" />
     <Compile Include="..\Packet\PacketDefine.cs" Link="Packet\PacketDefine.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Packet\" />
+    <PackageReference Include="MessagePack" Version="2.5.172" />
+    <PackageReference Include="SuperSocket.ClientEngine" Version="0.10.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MessagePack" Version="2.5.172" />
-    <PackageReference Include="SuperSocket.ClientEngine" Version="0.10.0" />
+    <Folder Include="Packet\" />
   </ItemGroup>
 
 </Project>

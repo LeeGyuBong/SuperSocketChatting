@@ -26,8 +26,14 @@ namespace SuperSocketServer
                 return;
             }
 
-            Console.WriteLine("\n서버 네트워크 시작\n아무키를 누르면 종료한다....");
-            Console.ReadKey();
+            Console.WriteLine("\n서버 네트워크 시작\nq키를 누르면 종료한다....");
+            while (Console.ReadKey().KeyChar != 'q')
+            {
+                Console.WriteLine();
+                continue;
+            }
+
+            server.Stop();
         }
     }
 }
