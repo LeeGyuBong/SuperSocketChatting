@@ -6,14 +6,32 @@ namespace SuperSocketShared.Packet
 {
     public class SocketPacket
     {
-        public static readonly int PACKET_LENGTH_SIZE = sizeof(int); // 패킷 길이 크기
-        public static readonly int PACKET_TYPE_SIZE = sizeof(int); // 패킷 타입 크기
+        /// <summary>
+        /// 패킷 길이 크기
+        /// </summary>
+        public static readonly int PACKET_LENGTH_SIZE = sizeof(int);
+        /// <summary>
+        /// 패킷 타입 크기
+        /// </summary>
+        public static readonly int PACKET_TYPE_SIZE = sizeof(int);
+        /// <summary>
+        /// 인코딩
+        /// </summary>
         public static readonly Encoding DATA_ENCODING = Encoding.UTF8;
 
-        public int Type { get; set; } // PacketID //패킷 타입
+        /// <summary>
+        /// PacketID, 패킷 타입
+        /// </summary>
+        public int Type { get; set; }
 
-        public string Data { get; set; } = string.Empty; // 패킷 데이터
+        /// <summary>
+        /// 패킷 데이터
+        /// </summary>
+        public string Data { get; set; } = string.Empty;
 
+        /// <summary>
+        /// 전체 패킷 크기
+        /// </summary>
         public int Length
         {
             get
