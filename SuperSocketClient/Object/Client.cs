@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using SuperSocketClient.Network;
 using SuperSocketClient.Scene;
 using SuperSocketShared.Packet;
 
@@ -6,13 +7,13 @@ namespace SuperSocketClient.Object
 {
     public partial class Client
 #if LOCAL_SOCKET
-        : TcpConnection
+        : SocketSession
 #else
-        : ClientSession
+        : SuperSocketSession
 #endif
     {
         public bool IsInit { get; private set; } = false;
-        public string Name { get; private set; }
+        public string Name { get; private set; } = string.Empty;
 
         public void Init(string name)
         {
@@ -50,7 +51,6 @@ namespace SuperSocketClient.Object
 
         public void SendChat(string message)
         {
-
             if (IsConnected == false)
             {
                 return;

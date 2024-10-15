@@ -3,14 +3,14 @@ using SuperSocket.ClientEngine;
 using SuperSocketShared.Packet;
 using System.Net;
 
-namespace SuperSocketClient.Object
+namespace SuperSocketClient.Network
 {
-    public abstract class ClientSession
+    public abstract class SuperSocketSession
     {
         private string __connectionIP = "127.0.0.1";
         private int __connectionPort = 11021;
 
-        private TcpClientSession __tcpSession = null;
+        private TcpClientSession? __tcpSession = null;
 
         private int __receivedSize = 0;
         private int __packetSize = 0;

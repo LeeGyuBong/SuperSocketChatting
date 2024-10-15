@@ -1,28 +1,32 @@
 ﻿using MessagePack;
 using SuperSocketShared.Packet;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 
 namespace SuperSocketClient.Network
 {
-    public abstract class TcpConnection
+    public abstract class SocketSession
     {
         public Socket? socket = null;
         public string LatestErrorMsg = "";
 
         bool IsThreadRunning = false;
         private Thread? __packetRecvThread = null;
+        private Thread? __packetSendThread = null;
+
+        private ConcurrentQueue<byte[]> __sendPacketQueue = new ConcurrentQueue<byte[]>();
 
         public bool IsConnected
         {
             get { return socket != null && socket.Connected; }
         }
 
-        public TcpConnection()
+        public SocketSession()
         {
         }
 
-        ~TcpConnection()
+        ~SocketSession()
         {
             Close();
         }
@@ -46,12 +50,14 @@ namespace SuperSocketClient.Network
                     return false;
                 }
 
-                socket.LingerState = new LingerOption(true, 0);
-
                 IsThreadRunning = true;
                 __packetRecvThread = new Thread(RecvPackProcess);
                 __packetRecvThread.IsBackground = true;
                 __packetRecvThread.Start();
+
+                __packetSendThread = new Thread(SendPacketProcess);
+                __packetSendThread.IsBackground = true;
+                __packetSendThread.Start();
 
                 return true;
             }
@@ -144,6 +150,25 @@ namespace SuperSocketClient.Network
 
         protected abstract void PacketProcess(SocketPacket packet);
 
+        private void SendPacketProcess()
+        {
+            while (IsThreadRunning)
+            {
+                if (IsConnected)
+                {
+                    while (__sendPacketQueue.TryDequeue(out var sendBuffer))
+                    {
+                        if (sendBuffer != null)
+                        {
+                            Send(sendBuffer);
+                        }
+                    }
+                }
+
+                Thread.Sleep(1);
+            }
+        }
+
         private void Send(byte[] sendBuffer)
         {
             try
@@ -169,7 +194,9 @@ namespace SuperSocketClient.Network
             byte[] buffer = packet.GetBytes();
             if (buffer != null)
             {
-                Send(buffer);
+                __sendPacketQueue.Enqueue(buffer);
+
+                //Send(buffer);
             }
         }
 
@@ -181,12 +208,23 @@ namespace SuperSocketClient.Network
                 socket.Close();
                 socket = null;
 
-                if (__packetRecvThread != null && __packetRecvThread.IsAlive)
+                if(IsThreadRunning)
                 {
                     IsThreadRunning = false;
-                    __packetRecvThread.Join();
-                    __packetRecvThread = null;
-                }
+                    if (__packetRecvThread != null && __packetRecvThread.IsAlive)
+                    {
+                        __packetRecvThread.Join();
+                        __packetRecvThread = null;
+                    }
+
+                    if (__packetSendThread != null && __packetSendThread.IsAlive)
+                    {
+                        __packetSendThread.Join();
+                        __packetSendThread = null;
+
+                        __sendPacketQueue.Clear();
+                    }
+                }            
             }
         }
     }

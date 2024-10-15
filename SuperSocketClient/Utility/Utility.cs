@@ -2,7 +2,7 @@
 {
     public class Singleton<T> where T : class, new()
     {
-        private static volatile T __instance = null;
+        private static volatile T? __instance = null;
         private static object __lock = new object();
 
         public static T Instance
