@@ -1,4 +1,5 @@
-﻿using SuperSocketClient.Object;
+﻿using SuperSocketClient.Manager;
+using SuperSocketClient.Object;
 
 namespace SuperSocketClient.Scene
 {
@@ -15,7 +16,6 @@ namespace SuperSocketClient.Scene
         private void LogoutReq_Click(object sender, EventArgs e)
         {
             FormClose();
-
             Close();
         }
 
@@ -27,14 +27,15 @@ namespace SuperSocketClient.Scene
             {
                 e.SuppressKeyPress = true;
 
-                Client client = FormManager.Instance.Client;
+                Client? client = FormManager.Instance.Client;
                 if (client != null)
                 {
                     client.SendChat(ChatInputTextBox.Text);
                 }
                 else
                 {
-                    LogoutReq_Click(sender, e);
+                    FormClose();
+                    Close();
                 }
 
                 ChatInputTextBox.Clear();
@@ -65,22 +66,13 @@ namespace SuperSocketClient.Scene
 
         private void FormClose()
         {
-            Client client = FormManager.Instance.Client;
-            if (client != null)
-            {
-                client.Logout();
-            }
-
-            var formManager = FormManager.Instance;
+            FormManager.Instance.Client?.Logout();
 
             // 채팅폼을 폼 매니저에서 삭제
-            formManager.RemoveForm(FormType.Chat);
+            FormManager.Instance.RemoveForm(FormType.Chat);
 
-            LoginForm loginForm = formManager.GetForm(FormType.Login) as LoginForm;
-            if (loginForm != null)
-            {
-                loginForm.Show();
-            }
+            LoginForm? loginForm = FormManager.Instance.GetForm(FormType.Login) as LoginForm;
+            loginForm?.Show();
         }
     }
 }

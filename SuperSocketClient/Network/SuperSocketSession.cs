@@ -21,7 +21,7 @@ namespace SuperSocketClient.Network
         {
             get
             {
-                return __tcpSession != null && __tcpSession.IsConnected;
+                return __tcpSession?.IsConnected ?? false;
             }
         }
 
@@ -95,7 +95,7 @@ namespace SuperSocketClient.Network
             {
                 if (__header == null)
                 {
-                    // 1회 통신으로 데이터를 받은 경우
+                    // 1회 통신으로 데이터를 다 받은 경우
                     __packetSize = SocketPacket.DecodeIntFromBytes(readBuffer, offset);
                     __receivedSize += SocketPacket.PACKET_LENGTH_SIZE;
                 }
@@ -165,7 +165,7 @@ namespace SuperSocketClient.Network
         {
             if (IsConnected)
             {
-                __tcpSession.Close();
+                __tcpSession?.Close();
             }
         }
 
@@ -181,7 +181,7 @@ namespace SuperSocketClient.Network
                 {
                     try
                     {
-                        __tcpSession.Send(new ArraySegment<byte>(buffer));
+                        __tcpSession?.Send(new ArraySegment<byte>(buffer));
                     }
                     catch (Exception ex)
                     {

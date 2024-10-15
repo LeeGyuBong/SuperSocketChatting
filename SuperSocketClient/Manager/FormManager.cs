@@ -1,7 +1,8 @@
 ﻿using SuperSocketClient.Object;
+using SuperSocketClient.Scene;
 using SuperSocketClient.Utility;
 
-namespace SuperSocketClient.Scene
+namespace SuperSocketClient.Manager
 {
     public enum FormType
     {
@@ -14,7 +15,7 @@ namespace SuperSocketClient.Scene
     {
         private readonly Dictionary<FormType, Form> __formList = new Dictionary<FormType, Form>();
 
-        public Client Client { get; private set; } = new Client();
+        public Client? Client { get; private set; } = new Client();
 
         ~FormManager()
         {
@@ -22,9 +23,9 @@ namespace SuperSocketClient.Scene
             Client = null;
         }
 
-        private Form CreateForm(FormType type)
+        private Form? CreateForm(FormType type)
         {
-            Form newFrom = null;
+            Form? newFrom = null;
 
             if (__formList.ContainsKey(type))
             {
@@ -59,7 +60,7 @@ namespace SuperSocketClient.Scene
             }
         }
 
-        public Form GetForm(FormType type)
+        public Form? GetForm(FormType type)
         {
             if (__formList.ContainsKey(type))
             {

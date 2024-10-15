@@ -1,4 +1,4 @@
-using SuperSocketClient.Scene;
+using SuperSocketClient.Manager;
 
 namespace SuperSocketClient.Main
 {
@@ -14,14 +14,10 @@ namespace SuperSocketClient.Main
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            Form loginForm = FormManager.Instance.GetForm(FormType.Login);
+            Form? loginForm = FormManager.Instance.GetForm(FormType.Login);
             if (loginForm != null)
             {
                 Application.Run(loginForm);
-            }
-            else
-            {
-                Application.Exit();
             }
         }
     }

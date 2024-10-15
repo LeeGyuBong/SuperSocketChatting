@@ -8,8 +8,7 @@ namespace SuperSocketClient.Network
 {
     public abstract class SocketSession
     {
-        public Socket? socket = null;
-        public string LatestErrorMsg = "";
+        private Socket? __socket = null;
 
         bool IsThreadRunning = false;
         private Thread? __packetRecvThread = null;
@@ -19,7 +18,7 @@ namespace SuperSocketClient.Network
 
         public bool IsConnected
         {
-            get { return socket != null && socket.Connected; }
+            get { return __socket?.Connected ?? false;  }
         }
 
         public SocketSession()
@@ -35,35 +34,31 @@ namespace SuperSocketClient.Network
         {
             try
             {
-                IPAddress serverIP = IPAddress.Parse(ip);
-                int serverPort = port;
-
-                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                if (socket == null)
+                __socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                __socket.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
+                if (__socket.Connected == false)
                 {
-                    return false;
-                }
-
-                socket.Connect(new IPEndPoint(serverIP, serverPort));
-                if (socket.Connected == false)
-                {
+                    __socket = null;
                     return false;
                 }
 
                 IsThreadRunning = true;
-                __packetRecvThread = new Thread(RecvPackProcess);
-                __packetRecvThread.IsBackground = true;
+                __packetRecvThread = new Thread(RecvPackProcess)
+                {
+                    IsBackground = true
+                };
                 __packetRecvThread.Start();
 
-                __packetSendThread = new Thread(SendPacketProcess);
-                __packetSendThread.IsBackground = true;
+                __packetSendThread = new Thread(SendPacketProcess)
+                {
+                    IsBackground = true
+                };
                 __packetSendThread.Start();
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                LatestErrorMsg = ex.Message;
                 return false;
             }
         }
@@ -78,7 +73,7 @@ namespace SuperSocketClient.Network
                 }
 
                 byte[] buffer = new byte[65536];
-                var receiveSize = socket.Receive(buffer, 0, buffer.Length, SocketFlags.None);
+                var receiveSize = __socket?.Receive(buffer, 0, buffer.Length, SocketFlags.None) ?? 0;
                 if (receiveSize == 0)
                 {
                     return null;
@@ -86,9 +81,8 @@ namespace SuperSocketClient.Network
 
                 return Tuple.Create(receiveSize, buffer);
             }
-            catch (SocketException se)
+            catch (SocketException)
             {
-                LatestErrorMsg = se.Message;
             }
 
             return null;
@@ -173,11 +167,10 @@ namespace SuperSocketClient.Network
         {
             try
             {
-                socket.Send(sendBuffer, 0, sendBuffer.Length, SocketFlags.None);
+                __socket?.Send(sendBuffer, 0, sendBuffer.Length, SocketFlags.None);
             }
-            catch (SocketException se)
+            catch (SocketException)
             {
-                LatestErrorMsg = se.Message;
             }
         }
 
@@ -204,22 +197,24 @@ namespace SuperSocketClient.Network
         {
             if (IsConnected)
             {
-                socket.Shutdown(SocketShutdown.Both);
-                socket.Close();
-                socket = null;
+                __socket?.Shutdown(SocketShutdown.Both);
+                __socket?.Close();
+                __socket = null;
 
                 if(IsThreadRunning)
                 {
                     IsThreadRunning = false;
-                    if (__packetRecvThread != null && __packetRecvThread.IsAlive)
+                    if (__packetRecvThread != null)
                     {
-                        __packetRecvThread.Join();
+                        if (__packetRecvThread.IsAlive)
+                            __packetRecvThread.Join();
                         __packetRecvThread = null;
                     }
 
-                    if (__packetSendThread != null && __packetSendThread.IsAlive)
+                    if (__packetSendThread != null)
                     {
-                        __packetSendThread.Join();
+                        if (__packetSendThread.IsAlive)
+                            __packetSendThread.Join();
                         __packetSendThread = null;
 
                         __sendPacketQueue.Clear();
