@@ -15,7 +15,6 @@ namespace SuperSocketClient.Scene
 
         private void LogoutReq_Click(object sender, EventArgs e)
         {
-            FormClose();
             Close();
         }
 
@@ -55,12 +54,12 @@ namespace SuperSocketClient.Scene
             {
                 ChatBoradTextBox.Invoke(new MethodInvoker(delegate ()
                 {
-                    ChatBoradTextBox.AppendText($"[{now.Hour}:{now.Minute}:{now.Second}] {sender} : {message}\r\n");
+                    ChatBoradTextBox.AppendText($"[{now.ToString("HH:mm:ss")}] {sender} : {message}\r\n");
                 }));
             }
             else
             {
-                ChatBoradTextBox.AppendText($"[{now.Hour}:{now.Minute}:{now.Second}] {sender} : {message}\r\n");
+                ChatBoradTextBox.AppendText($"[{now.ToString("HH:mm:ss")}] {sender} : {message}\r\n");
             }
         }
 

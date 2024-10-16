@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SuperSocketShared.Packet
 {
-    public class SocketPacket
+    public class SocketPacket : EventArgs
     {
         /// <summary>
         /// 패킷 길이 크기

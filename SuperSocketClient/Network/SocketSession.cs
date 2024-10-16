@@ -6,7 +6,7 @@ using System.Net.Sockets;
 
 namespace SuperSocketClient.Network
 {
-    public abstract class SocketSession
+    public class SocketSession : ISession
     {
         private Socket? __socket = null;
 
@@ -15,22 +15,20 @@ namespace SuperSocketClient.Network
         private Thread? __packetSendThread = null;
 
         private ConcurrentQueue<byte[]> __sendPacketQueue = new ConcurrentQueue<byte[]>();
-
-        public bool IsConnected
-        {
-            get { return __socket?.Connected ?? false;  }
-        }
-
-        public SocketSession()
-        {
-        }
+        private ConcurrentDictionary<int, EventHandler<SocketPacket>> __packetProcess = new ConcurrentDictionary<int, EventHandler<SocketPacket>>();
 
         ~SocketSession()
         {
-            Close();
+            CloseSession();
         }
 
-        protected bool Connect(string ip, int port)
+        // ---------------------------------------------------------------------------
+        public bool IsConnected
+        {
+            get { return __socket?.Connected ?? false; }
+        }
+
+        public bool ConnectSession(string ip, int port)
         {
             try
             {
@@ -38,8 +36,7 @@ namespace SuperSocketClient.Network
                 __socket.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 if (__socket.Connected == false)
                 {
-                    __socket = null;
-                    return false;
+                    throw new Exception();
                 }
 
                 IsThreadRunning = true;
@@ -59,9 +56,76 @@ namespace SuperSocketClient.Network
             }
             catch (Exception)
             {
+                __socket = null;
                 return false;
             }
         }
+
+        public void CloseSession()
+        {
+            if (IsConnected)
+            {
+                __socket?.Shutdown(SocketShutdown.Both);
+                __socket?.Close();
+                __socket = null;
+
+                if (IsThreadRunning)
+                {
+                    IsThreadRunning = false;
+                    if (__packetRecvThread != null)
+                    {
+                        if (__packetRecvThread.IsAlive)
+                            __packetRecvThread.Join();
+                        __packetRecvThread = null;
+                    }
+
+                    if (__packetSendThread != null)
+                    {
+                        if (__packetSendThread.IsAlive)
+                            __packetSendThread.Join();
+                        __packetSendThread = null;
+
+                        __sendPacketQueue.Clear();
+                    }
+                }
+            }
+        }
+
+        public void SendPacket<T>(PacketID packetID, T packetObj)
+        {
+            if (IsConnected == false || packetObj == null)
+            {
+                return;
+            }
+
+            SocketPacket packet = new SocketPacket((int)PacketID.DummyChatReq);
+            packet.Data = Convert.ToBase64String(MessagePackSerializer.Serialize(packetObj));
+
+            byte[] buffer = packet.GetBytes();
+            if (buffer != null)
+            {
+                __sendPacketQueue.Enqueue(buffer);
+            }
+        }
+
+        public void PacketProcess(object? packetObj)
+        {
+            if (packetObj != null)
+            {
+                SocketPacket packet = (SocketPacket)packetObj;
+                if (__packetProcess?.TryGetValue(packet.Type, out var eventHandler) ?? false)
+                {
+                    eventHandler?.Invoke(this, packet);
+                }
+            }
+        }
+
+        public void AddPacketProcessEvent(PacketID packetID, EventHandler<SocketPacket> eventHandler)
+        {
+            __packetProcess?.TryAdd((int)packetID, eventHandler);
+        }
+
+        // ---------------------------------------------------------------------------
 
         private Tuple<int, byte[]>? Receive()
         {
@@ -134,16 +198,6 @@ namespace SuperSocketClient.Network
             }
         }
 
-        private void PacketProcess(object? packetObj)
-        {
-            if (packetObj != null)
-            {
-                PacketProcess((SocketPacket)packetObj);
-            }
-        }
-
-        protected abstract void PacketProcess(SocketPacket packet);
-
         private void SendPacketProcess()
         {
             while (IsThreadRunning)
@@ -154,72 +208,12 @@ namespace SuperSocketClient.Network
                     {
                         if (sendBuffer != null)
                         {
-                            Send(sendBuffer);
+                            __socket?.Send(sendBuffer, 0, sendBuffer.Length, SocketFlags.None);
                         }
                     }
                 }
 
                 Thread.Sleep(1);
-            }
-        }
-
-        private void Send(byte[] sendBuffer)
-        {
-            try
-            {
-                __socket?.Send(sendBuffer, 0, sendBuffer.Length, SocketFlags.None);
-            }
-            catch (SocketException)
-            {
-            }
-        }
-
-        protected void SendPacket<T>(PacketID packetID, T packetObj)
-        {
-            if (IsConnected == false || packetObj == null)
-            {
-                return;
-            }
-
-            SocketPacket packet = new SocketPacket((int)PacketID.DummyChatReq);
-            packet.Data = Convert.ToBase64String(MessagePackSerializer.Serialize(packetObj));
-
-            byte[] buffer = packet.GetBytes();
-            if (buffer != null)
-            {
-                __sendPacketQueue.Enqueue(buffer);
-
-                //Send(buffer);
-            }
-        }
-
-        protected void Close()
-        {
-            if (IsConnected)
-            {
-                __socket?.Shutdown(SocketShutdown.Both);
-                __socket?.Close();
-                __socket = null;
-
-                if(IsThreadRunning)
-                {
-                    IsThreadRunning = false;
-                    if (__packetRecvThread != null)
-                    {
-                        if (__packetRecvThread.IsAlive)
-                            __packetRecvThread.Join();
-                        __packetRecvThread = null;
-                    }
-
-                    if (__packetSendThread != null)
-                    {
-                        if (__packetSendThread.IsAlive)
-                            __packetSendThread.Join();
-                        __packetSendThread = null;
-
-                        __sendPacketQueue.Clear();
-                    }
-                }            
             }
         }
     }

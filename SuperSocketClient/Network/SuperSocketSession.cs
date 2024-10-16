@@ -1,15 +1,14 @@
 ﻿using MessagePack;
 using SuperSocket.ClientEngine;
 using SuperSocketShared.Packet;
+using System;
+using System.Collections.Concurrent;
 using System.Net;
 
 namespace SuperSocketClient.Network
 {
-    public abstract class SuperSocketSession
+    public class SuperSocketSession : ISession
     {
-        private string __connectionIP = "127.0.0.1";
-        private int __connectionPort = 11021;
-
         private TcpClientSession? __tcpSession = null;
 
         private int __receivedSize = 0;
@@ -17,35 +16,35 @@ namespace SuperSocketClient.Network
         private byte[] __receiveBuffer = null;
         private byte[] __header = null;
 
+        private ConcurrentDictionary<int, EventHandler<SocketPacket>> __packetProcess = new ConcurrentDictionary<int, EventHandler<SocketPacket>>();
+
+        // ---------------------------------------------------------------------------
         public bool IsConnected
         {
-            get
-            {
-                return __tcpSession?.IsConnected ?? false;
-            }
+            get { return __tcpSession?.IsConnected ?? false; }
         }
 
-        protected bool Connected()
+        public bool ConnectSession(string ip, int port)
         {
-            if (__tcpSession == null)
-            {
-                __tcpSession = new AsyncTcpSession
-                {
-                    ReceiveBufferSize = 65536,
-                    NoDelay = true
-                };
-
-                __tcpSession.Connected += OnConnected;
-                __tcpSession.DataReceived += OnDataReceive;
-                __tcpSession.Closed += OnClosed;
-                __tcpSession.Error += OnError;
-            }
-
             try
             {
+                if (__tcpSession == null)
+                {
+                    __tcpSession = new AsyncTcpSession
+                    {
+                        ReceiveBufferSize = 65536,
+                        NoDelay = true
+                    };
+
+                    __tcpSession.Connected += OnConnected;
+                    __tcpSession.DataReceived += OnDataReceive;
+                    __tcpSession.Closed += OnClosed;
+                    __tcpSession.Error += OnError;
+                }
+
                 if (__tcpSession.IsConnected == false)
                 {
-                    __tcpSession.Connect(new IPEndPoint(IPAddress.Parse(__connectionIP), __connectionPort));
+                    __tcpSession.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 }
 
                 return true;
@@ -56,6 +55,49 @@ namespace SuperSocketClient.Network
                 return false;
             }
         }
+
+        public void CloseSession()
+        {
+            if (IsConnected)
+            {
+                __tcpSession?.Close();
+            }
+        }
+
+        public void SendPacket<T>(PacketID packetID, T packetObj)
+        {
+            if (IsConnected == false || packetObj == null)
+            {
+                return;
+            }
+
+            SocketPacket packet = new SocketPacket((int)packetID);
+            packet.Data = Convert.ToBase64String(MessagePackSerializer.Serialize(packetObj));
+
+            byte[] buffer = packet.GetBytes();
+            if (buffer != null)
+            {
+                __tcpSession?.Send(new ArraySegment<byte>(buffer));
+            }
+        }
+
+        public void PacketProcess(object? packetObj)
+        {
+            if (packetObj != null)
+            {
+                SocketPacket packet = (SocketPacket)packetObj;
+                if (__packetProcess?.TryGetValue(packet.Type, out var eventHandler) ?? false)
+                {
+                    eventHandler?.Invoke(this, packet);
+                }
+            }
+        }
+
+        public void AddPacketProcessEvent(PacketID packetID, EventHandler<SocketPacket> eventHandler)
+        {
+            __packetProcess?.TryAdd((int)packetID, eventHandler);
+        }
+        // ---------------------------------------------------------------------------
 
         private void OnConnected(object? sender, EventArgs e)
         {
@@ -160,45 +202,5 @@ namespace SuperSocketClient.Network
         {
 
         }
-
-        protected void Disconnected()
-        {
-            if (IsConnected)
-            {
-                __tcpSession?.Close();
-            }
-        }
-
-        protected void SendPacket<T>(PacketID packetID, T packetObj)
-        {
-            if (IsConnected && packetObj != null)
-            {
-                SocketPacket packet = new SocketPacket((int)packetID);
-                packet.Data = Convert.ToBase64String(MessagePackSerializer.Serialize(packetObj));
-
-                byte[] buffer = packet.GetBytes();
-                if (buffer != null)
-                {
-                    try
-                    {
-                        __tcpSession?.Send(new ArraySegment<byte>(buffer));
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"[Client] SendPacket - Exception.(Message:{ex.Message},Trace:{ex.StackTrace})");
-                    }
-                }
-            }
-        }
-
-        private void PacketProcess(object? packetObj)
-        {
-            if (packetObj != null)
-            {
-                PacketProcess((SocketPacket)packetObj);
-            }
-        }
-
-        protected abstract void PacketProcess(SocketPacket packet);
     }
 }
