@@ -1,7 +1,22 @@
-﻿namespace SuperSocketShared.Packet
+﻿using System;
+
+namespace SuperSocketShared.Packet
 {
     public enum PacketID : ushort
     {
-        DummyChatReq = 1,
+        LoginReq = 1,
+        LoginAck,
+
+        LoadCompletedReq,
+
+        ChatReq,
+
+        BroadcastChatAck,
+    }
+
+    public enum ErrorEvent : Int64
+    {
+        None = 0,
+        DuplicateLogin,
     }
 }

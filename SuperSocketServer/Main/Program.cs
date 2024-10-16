@@ -7,7 +7,7 @@ namespace SuperSocketServer
     {
         static void Main(string[] args)
         {
-            var server = new MyTcpServer();
+            var server = new SocketServer();
 
             // Config 로드
             if (false == server.InitConfig())

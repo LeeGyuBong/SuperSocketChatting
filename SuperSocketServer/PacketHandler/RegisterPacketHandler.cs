@@ -8,12 +8,12 @@ using System.Collections.Generic;
 namespace SuperSocketServer.Network.TCP
 {
     // 패킷이 많아지면 Server.cs의 가독성이 떨어질 수 있기에 패킷 등록 부분만 따로 분리
-    public partial class MyTcpServer : AppServer<MyTcpSession, BinaryRequestInfo>
+    public partial class SocketServer : AppServer<SocketSession, BinaryRequestInfo>
     {
-        Dictionary<int, Action<MyTcpSession, string>> __packetHandlerDic = new Dictionary<int, Action<MyTcpSession, string>>();
+        Dictionary<int, Action<SocketSession, string>> __packetHandlerDic = new Dictionary<int, Action<SocketSession, string>>();
         CommonHandler __commonHandler = new CommonHandler();
 
-        void OnNewRequestReceived(MyTcpSession session, BinaryRequestInfo requestInfo)
+        void OnNewRequestReceived(SocketSession session, BinaryRequestInfo requestInfo)
         {
             if (requestInfo.Body.Length <= MaxPacketSize)
             {
@@ -40,7 +40,9 @@ namespace SuperSocketServer.Network.TCP
 
         void CommonHandler()
         {
-            __packetHandlerDic.Add((int)PacketID.DummyChatReq, __commonHandler.RequestDummyChat);
+            __packetHandlerDic.Add((int)PacketID.LoginReq, __commonHandler.ProcessLoginReq);
+            __packetHandlerDic.Add((int)PacketID.LoadCompletedReq, __commonHandler.ProcessLoadCompletedReq);
+            __packetHandlerDic.Add((int)PacketID.ChatReq, __commonHandler.ProcessChatReq);
         }
     }
 }

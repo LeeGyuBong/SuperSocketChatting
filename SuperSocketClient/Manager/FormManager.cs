@@ -1,6 +1,7 @@
 ﻿using SuperSocketClient.Object;
 using SuperSocketClient.Scene;
 using SuperSocketClient.Utility;
+using System.Collections.Concurrent;
 
 namespace SuperSocketClient.Manager
 {
@@ -13,7 +14,7 @@ namespace SuperSocketClient.Manager
 
     public class FormManager : Singleton<FormManager>
     {
-        private readonly Dictionary<FormType, Form> __formList = new Dictionary<FormType, Form>();
+        private readonly ConcurrentDictionary<FormType, Form> __formList = new ConcurrentDictionary<FormType, Form>();
 
         public Client? Client { get; private set; } = new Client();
 
@@ -45,7 +46,7 @@ namespace SuperSocketClient.Manager
 
                 if (newFrom != null)
                 {
-                    __formList.Add(type, newFrom);
+                    __formList.TryAdd(type, newFrom);
                 }
             }
 
@@ -56,7 +57,7 @@ namespace SuperSocketClient.Manager
         {
             if (__formList.ContainsKey(type))
             {
-                __formList.Remove(type);
+                __formList.TryRemove(type, out var form);
             }
         }
 
@@ -64,7 +65,8 @@ namespace SuperSocketClient.Manager
         {
             if (__formList.ContainsKey(type))
             {
-                return __formList[type];
+                __formList.TryGetValue(type, out var form);
+                return form;
             }
 
             return CreateForm(type);

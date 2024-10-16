@@ -175,13 +175,15 @@
     <Compile Include="..\Packet\PacketDefine.cs">
       <Link>Packet\PacketDefine.cs</Link>
     </Compile>
+    <Compile Include="Manager\SessionManager.cs" />
     <Compile Include="PacketHandler\CommonHandler.cs" />
     <Compile Include="PacketHandler\RegisterPacketHandler.cs" />
-    <Compile Include="Network\TCP\TcpPacketReceive.cs" />
+    <Compile Include="Network\TCP\PacketReceive.cs" />
     <Compile Include="Main\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Network\TCP\TcpSession.cs" />
-    <Compile Include="Network\TCP\TcpServer.cs" />
+    <Compile Include="Network\TCP\SocketSession.cs" />
+    <Compile Include="Network\TCP\SocketServer.cs" />
+    <Compile Include="Utility\Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig">

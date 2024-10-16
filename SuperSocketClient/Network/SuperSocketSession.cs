@@ -1,15 +1,13 @@
 ﻿using MessagePack;
 using SuperSocket.ClientEngine;
 using SuperSocketShared.Packet;
-using System;
-using System.Collections.Concurrent;
 using System.Net;
 
 namespace SuperSocketClient.Network
 {
     public class SuperSocketSession : ISession
     {
-        private TcpClientSession? __tcpSession = null;
+        private AsyncTcpSession? __tcpSession = null;
 
         private int __receivedSize = 0;
         private int __packetSize = 0;
@@ -82,7 +80,7 @@ namespace SuperSocketClient.Network
             byte[] buffer = packet.GetBytes();
             if (buffer != null)
             {
-                __tcpSession?.Send(new ArraySegment<byte>(buffer));
+                __tcpSession?.TrySend(new ArraySegment<byte>(buffer));
             }
         }
 

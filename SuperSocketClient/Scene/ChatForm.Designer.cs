@@ -71,6 +71,7 @@
             Name = "ChatForm";
             Text = "SuperSocketClient_Chat";
             FormClosing += ChatForm_FormClosing;
+            Shown += ChatForm_Shown;
             ResumeLayout(false);
             PerformLayout();
         }

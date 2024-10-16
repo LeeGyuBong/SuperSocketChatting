@@ -2,25 +2,24 @@
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Protocol;
-using SuperSocketShared.Packet;
 using System;
 
 namespace SuperSocketServer.Network.TCP
 {
     // SuperSocket을 사용한 TCP 서버
     // 모든 AppSession 객체를 관리, SuperSocket의 몸통
-    public partial class MyTcpServer : AppServer<MyTcpSession, BinaryRequestInfo>
+    public partial class SocketServer : AppServer<SocketSession, BinaryRequestInfo>
     {
         IServerConfig __config;
 
         public int MaxPacketSize = 65536;
 
-        public MyTcpServer()
+        public SocketServer()
             : base(new DefaultReceiveFilterFactory<ReceiveFilter, BinaryRequestInfo>())
         {
-            //NewSessionConnected += new SessionHandler<MyTcpSession>(OnConnected);
-            //SessionClosed += new SessionHandler<MyTcpSession, CloseReason>(OnClosed);
-            NewRequestReceived += new RequestHandler<MyTcpSession, BinaryRequestInfo>(OnNewRequestReceived);
+            NewSessionConnected += new SessionHandler<SocketSession>(OnConnected);
+            //SessionClosed += new SessionHandler<SocketSession, CloseReason>(OnClosed);
+            NewRequestReceived += new RequestHandler<SocketSession, BinaryRequestInfo>(OnNewRequestReceived);
         }
 
         public bool InitConfig()
@@ -58,10 +57,10 @@ namespace SuperSocketServer.Network.TCP
             }
         }
 
-        //static void OnConnected(MyTcpSession session)
-        //{
-        //    Console.WriteLine($"세션 {session.SessionID} 접속.");
-        //}
+        public void OnConnected(SocketSession session)
+        {
+            Console.WriteLine($"세션 {session.SessionID} 접속.");
+        }
 
         //static void OnClosed(MyTcpSession session, CloseReason reason)
         //{

@@ -98,7 +98,7 @@ namespace SuperSocketClient.Network
                 return;
             }
 
-            SocketPacket packet = new SocketPacket((int)PacketID.DummyChatReq);
+            SocketPacket packet = new SocketPacket((int)packetID);
             packet.Data = Convert.ToBase64String(MessagePackSerializer.Serialize(packetObj));
 
             byte[] buffer = packet.GetBytes();
