@@ -14,6 +14,11 @@ namespace SuperSocketClient.Object
         public bool IsInit { get; private set; } = false;
         public string Name { get; private set; } = string.Empty;
 
+        ~Client()
+        {
+            Logout();
+        }
+
         public void Init(string name)
         {
             Name = name;

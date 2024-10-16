@@ -18,6 +18,11 @@ namespace SuperSocketClient.Network
 
         private ConcurrentDictionary<int, EventHandler<SocketPacket>> __packetProcess = new ConcurrentDictionary<int, EventHandler<SocketPacket>>();
 
+        ~SuperSocketSession()
+        {
+            CloseSession();
+        }
+
         // ---------------------------------------------------------------------------
         public bool IsConnected
         {
