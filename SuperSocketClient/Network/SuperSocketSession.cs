@@ -16,7 +16,7 @@ namespace SuperSocketClient.Network
         private byte[] __receiveBuffer = null;
         private byte[] __header = null;
 
-        private ConcurrentDictionary<int, EventHandler<SocketPacket>> __packetProcess = new ConcurrentDictionary<int, EventHandler<SocketPacket>>();
+        private ConcurrentDictionary<int, Action<SocketPacket>> __packetProcess = new ConcurrentDictionary<int, Action<SocketPacket>>();
 
         ~SuperSocketSession()
         {
@@ -91,16 +91,16 @@ namespace SuperSocketClient.Network
             if (packetObj != null)
             {
                 SocketPacket packet = (SocketPacket)packetObj;
-                if (__packetProcess?.TryGetValue(packet.Type, out var eventHandler) ?? false)
+                if (__packetProcess?.TryGetValue(packet.Type, out var action) ?? false)
                 {
-                    eventHandler?.Invoke(this, packet);
+                    action?.Invoke(packet);
                 }
             }
         }
 
-        public void AddPacketProcessEvent(PacketID packetID, EventHandler<SocketPacket> eventHandler)
+        public void AddPacketProcessEvent(PacketID packetID, Action<SocketPacket> action)
         {
-            __packetProcess?.TryAdd((int)packetID, eventHandler);
+            __packetProcess?.TryAdd((int)packetID, action);
         }
         // ---------------------------------------------------------------------------
 

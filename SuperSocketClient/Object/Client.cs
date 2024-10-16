@@ -27,7 +27,7 @@ namespace SuperSocketClient.Object
             {
                 //__session = new SocketSession();
                 __session = new SuperSocketSession();
-                __session.AddPacketProcessEvent(PacketID.DummyChatReq, new EventHandler<SocketPacket>(PKSendChatMessageProcess));
+                __session.AddPacketProcessEvent(PacketID.DummyChatReq, PKSendChatMessageProcess);
             }
 
             IsInit = true;
@@ -68,7 +68,7 @@ namespace SuperSocketClient.Object
             __session?.SendPacket(PacketID.DummyChatReq, packetBody);
         }
 
-        public void PKSendChatMessageProcess(object? sender, SocketPacket packet)
+        public void PKSendChatMessageProcess(SocketPacket packet)
         {
             if (packet == null)
                 return;
