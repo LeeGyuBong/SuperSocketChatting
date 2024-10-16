@@ -9,6 +9,7 @@ namespace SuperSocketClient.Scene
         {
             InitializeComponent();
 
+            // TODO : 폼에서 Net.Socket, 슈퍼소켓 선택해서 접속하도록 변경
 #if LOCAL_SOCKET
             NetworkTypeLabel.Text = "Net.Socket";
 #else
