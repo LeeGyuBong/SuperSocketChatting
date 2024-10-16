@@ -10,8 +10,27 @@ namespace SuperSocketServer.Network.TCP
     // 패킷이 많아지면 Server.cs의 가독성이 떨어질 수 있기에 패킷 등록 부분만 따로 분리
     public partial class MyTcpServer : AppServer<MyTcpSession, BinaryRequestInfo>
     {
-        Dictionary<int, Action<MyTcpSession, string>> __handlerMap = new Dictionary<int, Action<MyTcpSession, string>>();
+        Dictionary<int, Action<MyTcpSession, string>> __packetHandlerDic = new Dictionary<int, Action<MyTcpSession, string>>();
         CommonHandler __commonHandler = new CommonHandler();
+
+        void OnNewRequestReceived(MyTcpSession session, BinaryRequestInfo requestInfo)
+        {
+            if (requestInfo.Body.Length <= MaxPacketSize)
+            {
+                SocketPacket packet = new SocketPacket(requestInfo.Body);
+                if (packet != null)
+                {
+                    if (__packetHandlerDic.TryGetValue(packet.Type, out var action))
+                    {
+                        action?.Invoke(session, packet.Data);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Handler Not Exist! 세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
+                    }
+                }
+            }
+        }
 
         void RegistHandler()
         {
@@ -21,7 +40,7 @@ namespace SuperSocketServer.Network.TCP
 
         void CommonHandler()
         {
-            __handlerMap.Add((int)PacketID.DummyChatReq, __commonHandler.RequestDummyChat);
+            __packetHandlerDic.Add((int)PacketID.DummyChatReq, __commonHandler.RequestDummyChat);
         }
     }
 }

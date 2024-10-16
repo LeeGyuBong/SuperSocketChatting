@@ -20,7 +20,7 @@ namespace SuperSocketServer.Network.TCP
         {
             //NewSessionConnected += new SessionHandler<MyTcpSession>(OnConnected);
             //SessionClosed += new SessionHandler<MyTcpSession, CloseReason>(OnClosed);
-            NewRequestReceived += new RequestHandler<MyTcpSession, BinaryRequestInfo>(OnRequestReceived);
+            NewRequestReceived += new RequestHandler<MyTcpSession, BinaryRequestInfo>(OnNewRequestReceived);
         }
 
         public bool InitConfig()
@@ -67,24 +67,5 @@ namespace SuperSocketServer.Network.TCP
         //{
         //    Console.WriteLine($"세션 {session.SessionID} 접속 해제 : {reason}");
         //}
-
-        void OnRequestReceived(MyTcpSession session, BinaryRequestInfo requestInfo)
-        {
-            if (requestInfo.Body.Length <= MaxPacketSize)
-            {
-                SocketPacket packet = new SocketPacket(requestInfo.Body);
-                if (packet != null)
-                {
-                    if (__handlerMap.TryGetValue(packet.Type, out var Value))
-                    {
-                        Value(session, packet.Data);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Handler Not Exist! 세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
-                    }
-                }
-            }
-        }
     }
 }

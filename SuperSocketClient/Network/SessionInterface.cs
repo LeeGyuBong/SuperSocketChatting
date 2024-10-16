@@ -14,6 +14,6 @@ namespace SuperSocketClient.Network
 
         void PacketProcess(object? packetObj);
 
-        void AddPacketProcessEvent(PacketID packetID, Action<SocketPacket> eventHandler);
+        void AddPacketHandler(PacketID packetID, Action<SocketPacket> eventHandler);
     }
 }
