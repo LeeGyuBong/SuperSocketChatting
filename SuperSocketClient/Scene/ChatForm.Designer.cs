@@ -31,6 +31,8 @@
             LogoutReq = new Button();
             ChatBoradTextBox = new TextBox();
             ChatInputTextBox = new TextBox();
+            ClientList = new TextBox();
+            label1 = new Label();
             SuspendLayout();
             // 
             // LogoutReq
@@ -62,11 +64,31 @@
             ChatInputTextBox.TabIndex = 2;
             ChatInputTextBox.KeyDown += ChatInputByPressKeyEnter;
             // 
+            // ClientList
+            // 
+            ClientList.Location = new Point(391, 32);
+            ClientList.Multiline = true;
+            ClientList.Name = "ClientList";
+            ClientList.ReadOnly = true;
+            ClientList.Size = new Size(100, 382);
+            ClientList.TabIndex = 3;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(411, 15);
+            label1.Name = "label1";
+            label1.Size = new Size(59, 15);
+            label1.TabIndex = 4;
+            label1.Text = "유저 목록";
+            // 
             // ChatForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(799, 451);
+            Controls.Add(label1);
+            Controls.Add(ClientList);
             Controls.Add(ChatInputTextBox);
             Controls.Add(ChatBoradTextBox);
             Controls.Add(LogoutReq);
@@ -85,5 +107,7 @@
         private Button LogoutReq;
         private TextBox ChatBoradTextBox;
         private TextBox ChatInputTextBox;
+        private TextBox ClientList;
+        private Label label1;
     }
 }

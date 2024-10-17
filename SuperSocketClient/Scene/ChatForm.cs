@@ -88,6 +88,8 @@ namespace SuperSocketClient.Scene
 
         private void ChatBoxWriteEvent(object? sender, BroadcastChatBoxData e)
         {
+            // TODO : 텍스트가 일정 쌓였으면 비워줘야함
+            // 참고 : https://mintandcompany.tistory.com/entry/c-TextBox-MultiLine-%EC%82%AD%EC%A0%9C%EB%B0%A9%EB%B2%95
             DateTime now = DateTime.Now;
             string value = string.Empty;
             if (string.IsNullOrEmpty(e.Sender) == false &&
