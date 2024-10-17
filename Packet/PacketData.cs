@@ -130,16 +130,30 @@ namespace SuperSocketShared.Packet
     public class PKChatReq
     {
         [Key(0)]
-        public string Sender { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
         [Key(1)]
         public string Message { get; set; } = string.Empty;
+    }
+
+    [MessagePackObject]
+    public class PKBroadcastLoginAck
+    {
+        [Key(0)]
+        public string UserName { get; set; } = string.Empty;
+    }
+
+    [MessagePackObject]
+    public class PKBroadcastLogoutAck
+    {
+        [Key(0)]
+        public string UserName { get; set; } = string.Empty;
     }
 
     [MessagePackObject]
     public class PKBroadcastChatAck
     {
         [Key(0)]
-        public string Sender { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
         [Key(1)]
         public string Message { get; set; } = string.Empty;
     }

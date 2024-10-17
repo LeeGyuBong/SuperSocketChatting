@@ -90,7 +90,8 @@ namespace SuperSocketClient.Scene
         {
             DateTime now = DateTime.Now;
             string value = string.Empty;
-            if (e.Sender != "")
+            if (string.IsNullOrEmpty(e.Sender) == false &&
+                string.IsNullOrWhiteSpace(e.Sender) == false)
             {
                 value = $"[{now.ToString("HH:mm:ss")}] {e.Sender} : {e.Message}\r\n";
             }

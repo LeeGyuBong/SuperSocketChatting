@@ -32,6 +32,8 @@ namespace SuperSocketClient.Object
                     __session = new SocketSession();
 
                 __session?.AddPacketHandler(PacketID.LoginAck, ProcessLoginAck);
+                __session?.AddPacketHandler(PacketID.BroadcastLoginAck, ProcessBroadcastLoginAck);
+                __session?.AddPacketHandler(PacketID.BroadcastLogoutAck, ProcessBroadcastLogoutAck);
                 __session?.AddPacketHandler(PacketID.BroadcastChatAck, ProcessBroadcastChatAck);
             }
 
@@ -51,6 +53,13 @@ namespace SuperSocketClient.Object
             return __session?.ConnectSession("127.0.0.1", 11021) ?? false;
         }
 
+        public void Logout()
+        {
+            Reset();
+
+            __session?.CloseSession();
+        }
+
         public void SendLoginReq()
         {
             if (__session?.IsConnected == false)
@@ -66,13 +75,6 @@ namespace SuperSocketClient.Object
             __session?.SendPacket(PacketID.LoginReq, loginReqPacket);
         }
 
-        public void Logout()
-        {
-            Reset();
-
-            __session?.CloseSession();
-        }
-
         public void SendLoadCompleted()
         {
             if (__session?.IsConnected == false)
@@ -86,13 +88,15 @@ namespace SuperSocketClient.Object
         public void SendChatReq(string message)
         {
             if (__session?.IsConnected == false)
-            {
                 return;
-            }
+
+            if (string.IsNullOrEmpty(message) ||
+                string.IsNullOrWhiteSpace(message))
+                return;
 
             PKChatReq chatReqPacket = new PKChatReq()
             {
-                Sender = Name,
+                UserName = Name,
                 Message = message
             };
 
@@ -108,8 +112,17 @@ namespace SuperSocketClient.Object
             if (packet == null)
                 return;
 
+            var form = FormManager.Instance.GetForm(FormType.Login) as LoginForm;
+
             if (packet.ErrorEvent != ErrorEvent.None)
             {
+                switch(packet.ErrorEvent)
+                {
+                    case ErrorEvent.DuplicateLogin:
+                        form?.ErrorLabelTextUpdateEventHandler.Invoke(this, "중복 아이디 접속 시도");
+                        break;
+                }
+               
                 Logout();
                 return;
             }
@@ -117,8 +130,39 @@ namespace SuperSocketClient.Object
             UID = packet.UID;
 
             // 채팅 씬으로 전환
-            var form = FormManager.Instance.GetForm(FormType.Login) as LoginForm;
             form?.ChangeFormEventHandler.Invoke(this, EventArgs.Empty);
+        }
+
+        public void ProcessBroadcastLoginAck(SocketPacket recvPacket)
+        {
+            if (recvPacket == null)
+                return;
+
+            PKBroadcastLoginAck packet = MessagePackSerializer.Deserialize<PKBroadcastLoginAck>(Convert.FromBase64String(recvPacket.Data));
+            if (packet == null)
+                return;
+
+            ChatForm? chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
+            chatForm?.ChatBoxWriteEventHandler.Invoke(this, new BroadcastChatBoxData()
+            {
+                Message = $"{packet.UserName}님이 로그인했습니다."
+            });
+        }
+
+        public void ProcessBroadcastLogoutAck(SocketPacket recvPacket)
+        {
+            if (recvPacket == null)
+                return;
+
+            PKBroadcastLogoutAck packet = MessagePackSerializer.Deserialize<PKBroadcastLogoutAck>(Convert.FromBase64String(recvPacket.Data));
+            if (packet == null)
+                return;
+
+            ChatForm? chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
+            chatForm?.ChatBoxWriteEventHandler.Invoke(this, new BroadcastChatBoxData()
+            {
+                Message = $"{packet.UserName}님이 로그아웃했습니다."
+            });
         }
 
         public void ProcessBroadcastChatAck(SocketPacket recvPacket)
@@ -133,7 +177,7 @@ namespace SuperSocketClient.Object
             ChatForm? chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
             chatForm?.ChatBoxWriteEventHandler.Invoke(this, new BroadcastChatBoxData()
             {
-                Sender = packet.Sender,
+                Sender = packet.UserName,
                 Message = packet.Message
             });
         }

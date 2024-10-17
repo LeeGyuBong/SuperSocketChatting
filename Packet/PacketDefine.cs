@@ -11,6 +11,8 @@ namespace SuperSocketShared.Packet
 
         ChatReq,
 
+        BroadcastLoginAck,
+        BroadcastLogoutAck,
         BroadcastChatAck,
     }
 

@@ -2,6 +2,7 @@
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Protocol;
+using SuperSocketServer.Manager;
 using System;
 
 namespace SuperSocketServer.Network.TCP
@@ -17,8 +18,8 @@ namespace SuperSocketServer.Network.TCP
         public SocketServer()
             : base(new DefaultReceiveFilterFactory<ReceiveFilter, BinaryRequestInfo>())
         {
-            //NewSessionConnected += new SessionHandler<SocketSession>(OnConnected);
-            //SessionClosed += new SessionHandler<SocketSession, CloseReason>(OnClosed);
+            NewSessionConnected += new SessionHandler<SocketSession>(OnConnected);
+            SessionClosed += new SessionHandler<SocketSession, CloseReason>(OnClosed);
             NewRequestReceived += new RequestHandler<SocketSession, BinaryRequestInfo>(OnNewRequestReceived);
         }
 
@@ -57,14 +58,14 @@ namespace SuperSocketServer.Network.TCP
             }
         }
 
-        //public void OnConnected(SocketSession session)
-        //{
-        //    Console.WriteLine($"세션 {session.SessionID} 접속.");
-        //}
+        public void OnConnected(SocketSession session)
+        {
+            SessionManager.Instance.InsertSession(session);
+        }
 
-        //static void OnClosed(MyTcpSession session, CloseReason reason)
-        //{
-        //    Console.WriteLine($"세션 {session.SessionID} 접속 해제 : {reason}");
-        //}
+        static void OnClosed(SocketSession session, CloseReason reason)
+        {
+            SessionManager.Instance.RemoveSession(session.UID);
+        }
     }
 }

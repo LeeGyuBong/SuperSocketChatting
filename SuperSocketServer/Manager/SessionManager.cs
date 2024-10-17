@@ -1,5 +1,7 @@
-﻿using SuperSocketServer.Network.TCP;
+﻿using MessagePack;
+using SuperSocketServer.Network.TCP;
 using SuperSocketServer.Utility;
+using SuperSocketShared.Packet;
 using System;
 using System.Collections.Concurrent;
 
@@ -21,6 +23,19 @@ namespace SuperSocketServer.Manager
             return null;
         }
 
+        public SocketSession GetSession(string sessionName)
+        {
+            foreach (SocketSession socketSession in __sessionDic.Values)
+            {
+                if (socketSession.UserName == sessionName)
+                {
+                    return socketSession;
+                }
+            }
+
+            return null;
+        }
+
         public void InsertSession(SocketSession session)
         {
             if (__sessionDic.ContainsKey(session.UID) == false)
@@ -31,9 +46,21 @@ namespace SuperSocketServer.Manager
             }
         }
 
-        public bool RemoveSession(Int64 sessionId)
+        public void RemoveSession(Int64 sessionId)
         {
-            return __sessionDic.TryRemove(__sessionId, out var session);
+            if(__sessionDic.TryRemove(sessionId, out var session))
+            {
+                if (string.IsNullOrEmpty(session.UserName) == false)
+                {
+                    PKBroadcastLogoutAck ack = new PKBroadcastLogoutAck
+                    {
+                        UserName = session.UserName
+                    };
+
+                    SocketPacket ackPacket = new SocketPacket((int)PacketID.BroadcastLogoutAck, Convert.ToBase64String(MessagePackSerializer.Serialize(ack)));
+                    SendAll(ackPacket.GetBytes());
+                }
+            }
         }
 
         public void SendAll(byte[] sendBuffer)

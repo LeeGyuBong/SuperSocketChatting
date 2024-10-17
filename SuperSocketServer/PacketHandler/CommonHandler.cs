@@ -14,26 +14,36 @@ namespace SuperSocketServer.PacketHandler
             if (packet == null)
                 return;
 
-            session.SetUserName(packet.UserName);
-
             PKLoginAck ack = new PKLoginAck();
-            ack.UID = session.UID;
+
+            if (SessionManager.Instance.GetSession(packet.UserName) != null)
+            {
+                ack.ErrorEvent = ErrorEvent.DuplicateLogin;
+            }
+            else
+            {
+                ack.UID = session.UID;
+
+                session.SetUserName(packet.UserName);
+
+                Console.WriteLine($"[CommonHandler] ProcessLoginReq - {packet.UserName}님이 로그인했습니다.");
+            }
+            
             session.SendPacket(PacketID.LoginAck, ack);
         }
 
         public void ProcessLoadCompletedReq(SocketSession session, string packetData)
         {
-             PKLoadCompletedReq packet = MessagePackSerializer.Deserialize<PKLoadCompletedReq>(Convert.FromBase64String(packetData));
+            PKLoadCompletedReq packet = MessagePackSerializer.Deserialize<PKLoadCompletedReq>(Convert.FromBase64String(packetData));
             if (packet == null)
                 return;
 
-            PKBroadcastChatAck ack = new PKBroadcastChatAck();
-            ack.Sender = "";
-            ack.Message = $"{session.UserName}님이 접속했습니다.";
+            PKBroadcastLoginAck ack = new PKBroadcastLoginAck
+            {
+                UserName = session.UserName
+            };
 
-            SocketPacket ackPacket = new SocketPacket((int)PacketID.BroadcastChatAck);
-            ackPacket.Data = Convert.ToBase64String(MessagePackSerializer.Serialize(ack));
-
+            SocketPacket ackPacket = new SocketPacket((int)PacketID.BroadcastLoginAck, Convert.ToBase64String(MessagePackSerializer.Serialize(ack)));
             SessionManager.Instance.SendAll(ackPacket.GetBytes());
         }
 
@@ -44,7 +54,7 @@ namespace SuperSocketServer.PacketHandler
                 return;
 
             PKBroadcastChatAck ack = new PKBroadcastChatAck();
-            ack.Sender = packet.Sender;
+            ack.UserName = packet.UserName;
             ack.Message = packet.Message;
 
             SocketPacket ackPacket = new SocketPacket((int)PacketID.BroadcastChatAck);

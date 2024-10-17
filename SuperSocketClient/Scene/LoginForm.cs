@@ -9,6 +9,7 @@ namespace SuperSocketClient.Scene
     {
         public EventHandler ChangeFormEventHandler;
         public EventHandler ShowEventHandler;
+        public EventHandler<string> ErrorLabelTextUpdateEventHandler;
 
         public LoginForm()
         {
@@ -16,6 +17,7 @@ namespace SuperSocketClient.Scene
 
             ChangeFormEventHandler = new EventHandler(ChangeFormEvent);
             ShowEventHandler = new EventHandler(ShowEvent);
+            ErrorLabelTextUpdateEventHandler = new EventHandler<string>(ErrorLabelTextUpdateEvent);
         }
 
         private void LoginForm_Load(object sender, EventArgs e)
@@ -29,6 +31,15 @@ namespace SuperSocketClient.Scene
 
         private void LoginReq_Click(object sender, EventArgs e)
         {
+            string inputUserID = InputIdTextBox.Text;
+            if (string.IsNullOrEmpty(inputUserID) ||
+                string.IsNullOrWhiteSpace(inputUserID))
+            {
+                ErrorNoticeLabel.Text = "아이디를 입력해주세요.";
+                return;
+            }
+
+
             Client? client = FormManager.Instance.Client;
             if (client == null)
             {
@@ -38,7 +49,7 @@ namespace SuperSocketClient.Scene
             if (client.IsInit == false)
             {
                 // 플레이어 초기화
-                client.Init(InputIdTextBox.Text);
+                client.Init(inputUserID);
             }
 
             if (client.SessionConnect() == false)
@@ -97,6 +108,30 @@ namespace SuperSocketClient.Scene
             if (client != null)
             {
                 client.SocketSessionType = selectType;
+            }
+        }
+
+        private async void ErrorNoticeLabel_TextChanged(object sender, EventArgs e)
+        {
+            if(ErrorNoticeLabel.Text.Length > 0)
+            {
+                await Task.Delay(2500);
+                ErrorNoticeLabel.Text = string.Empty;
+            }
+        }
+
+        private void ErrorLabelTextUpdateEvent(object? sender, string e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(delegate ()
+                {
+                    ErrorNoticeLabel.Text = e;
+                }));
+            }
+            else
+            {
+                ErrorNoticeLabel.Text = e;
             }
         }
     }
