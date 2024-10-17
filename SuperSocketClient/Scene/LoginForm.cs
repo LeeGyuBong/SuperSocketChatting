@@ -38,7 +38,7 @@ namespace SuperSocketClient.Scene
             if (client.IsInit == false)
             {
                 // 플레이어 초기화
-                client.Init("Tester");
+                client.Init(InputIdTextBox.Text);
             }
 
             if (client.SessionConnect() == false)

@@ -17,7 +17,7 @@ namespace SuperSocketServer.Network.TCP
         public SocketServer()
             : base(new DefaultReceiveFilterFactory<ReceiveFilter, BinaryRequestInfo>())
         {
-            NewSessionConnected += new SessionHandler<SocketSession>(OnConnected);
+            //NewSessionConnected += new SessionHandler<SocketSession>(OnConnected);
             //SessionClosed += new SessionHandler<SocketSession, CloseReason>(OnClosed);
             NewRequestReceived += new RequestHandler<SocketSession, BinaryRequestInfo>(OnNewRequestReceived);
         }
@@ -52,15 +52,15 @@ namespace SuperSocketServer.Network.TCP
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception!! Message : {ex.Message}, StackTrace : {ex.StackTrace}");
+                Console.WriteLine($"[SocketServer] SetupServer - Exception.(Message:{ex.Message},Trace:{ex.StackTrace})");
                 return false;
             }
         }
 
-        public void OnConnected(SocketSession session)
-        {
-            Console.WriteLine($"세션 {session.SessionID} 접속.");
-        }
+        //public void OnConnected(SocketSession session)
+        //{
+        //    Console.WriteLine($"세션 {session.SessionID} 접속.");
+        //}
 
         //static void OnClosed(MyTcpSession session, CloseReason reason)
         //{

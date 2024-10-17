@@ -49,9 +49,9 @@ namespace SuperSocketServer.Network.TCP
                         TrySend(new ArraySegment<byte>(buffer));
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    Console.WriteLine($"[SocketSession] SendPacket - Exception.(Message:{ex.Message},Trace:{ex.StackTrace})");
                 }
             }
         }

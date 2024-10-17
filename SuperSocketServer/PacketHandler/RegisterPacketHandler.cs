@@ -26,7 +26,7 @@ namespace SuperSocketServer.Network.TCP
                     }
                     else
                     {
-                        Console.WriteLine($"Handler Not Exist! 세션 {session.SessionID} 받은 데이터 크기 : {requestInfo.Body.Length}");
+                        Console.WriteLine($"[SocketServer] OnNewRequestReceived - Error.(SessionID:{session.SessionID},DataSize:{requestInfo.Body.Length})");
                     }
                 }
             }

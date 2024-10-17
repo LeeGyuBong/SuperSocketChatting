@@ -45,18 +45,20 @@
             // 
             // ChatBoradTextBox
             // 
-            ChatBoradTextBox.Enabled = false;
             ChatBoradTextBox.Location = new Point(12, 12);
             ChatBoradTextBox.Multiline = true;
             ChatBoradTextBox.Name = "ChatBoradTextBox";
-            ChatBoradTextBox.Size = new Size(373, 426);
+            ChatBoradTextBox.ReadOnly = true;
+            ChatBoradTextBox.ScrollBars = ScrollBars.Vertical;
+            ChatBoradTextBox.Size = new Size(373, 425);
             ChatBoradTextBox.TabIndex = 1;
+            ChatBoradTextBox.TabStop = false;
             // 
             // ChatInputTextBox
             // 
-            ChatInputTextBox.Location = new Point(530, 415);
+            ChatInputTextBox.Location = new Point(12, 414);
             ChatInputTextBox.Name = "ChatInputTextBox";
-            ChatInputTextBox.Size = new Size(258, 23);
+            ChatInputTextBox.Size = new Size(373, 23);
             ChatInputTextBox.TabIndex = 2;
             ChatInputTextBox.KeyDown += ChatInputByPressKeyEnter;
             // 
@@ -64,12 +66,14 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(799, 451);
             Controls.Add(ChatInputTextBox);
             Controls.Add(ChatBoradTextBox);
             Controls.Add(LogoutReq);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "ChatForm";
-            Text = "SuperSocketClient_Chat";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Chat";
             FormClosing += ChatForm_FormClosing;
             Shown += ChatForm_Shown;
             ResumeLayout(false);

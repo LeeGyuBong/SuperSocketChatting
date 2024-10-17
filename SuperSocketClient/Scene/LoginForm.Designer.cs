@@ -30,11 +30,13 @@
         {
             LoginReq = new Button();
             SocketTypeComboBox = new ComboBox();
+            InputIdTextBox = new TextBox();
+            LoginTextLabel = new Label();
             SuspendLayout();
             // 
             // LoginReq
             // 
-            LoginReq.Location = new Point(315, 259);
+            LoginReq.Location = new Point(60, 84);
             LoginReq.Name = "LoginReq";
             LoginReq.Size = new Size(154, 65);
             LoginReq.TabIndex = 0;
@@ -52,22 +54,48 @@
             SocketTypeComboBox.TabIndex = 1;
             SocketTypeComboBox.SelectedIndexChanged += SocketTypeComboBox_SelectedIndexChanged;
             // 
+            // InputIdTextBox
+            // 
+            InputIdTextBox.Location = new Point(114, 53);
+            InputIdTextBox.MaxLength = 8;
+            InputIdTextBox.Name = "InputIdTextBox";
+            InputIdTextBox.Size = new Size(100, 23);
+            InputIdTextBox.TabIndex = 2;
+            // 
+            // LoginTextLabel
+            // 
+            LoginTextLabel.AutoSize = true;
+            LoginTextLabel.Location = new Point(65, 56);
+            LoginTextLabel.Name = "LoginTextLabel";
+            LoginTextLabel.Size = new Size(43, 15);
+            LoginTextLabel.TabIndex = 3;
+            LoginTextLabel.Text = "아이디";
+            // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(269, 161);
+            ControlBox = false;
+            Controls.Add(LoginTextLabel);
+            Controls.Add(InputIdTextBox);
             Controls.Add(SocketTypeComboBox);
             Controls.Add(LoginReq);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "LoginForm";
-            Text = "SuperSocketClient_Login";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Login";
             Load += LoginForm_Load;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private Button LoginReq;
         private ComboBox SocketTypeComboBox;
+        private TextBox InputIdTextBox;
+        private Label LoginTextLabel;
     }
 }

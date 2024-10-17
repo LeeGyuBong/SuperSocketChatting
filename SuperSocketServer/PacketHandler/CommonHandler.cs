@@ -43,8 +43,6 @@ namespace SuperSocketServer.PacketHandler
             if (packet == null)
                 return;
 
-            Console.WriteLine($"[{packet.Sender}] Message : {packet.Message}");
-
             PKBroadcastChatAck ack = new PKBroadcastChatAck();
             ack.Sender = packet.Sender;
             ack.Message = packet.Message;
