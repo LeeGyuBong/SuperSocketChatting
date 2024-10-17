@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             LoginReq = new Button();
-            NetworkTypeLabel = new Label();
+            SocketTypeComboBox = new ComboBox();
             SuspendLayout();
             // 
             // LoginReq
@@ -42,30 +42,32 @@
             LoginReq.UseVisualStyleBackColor = true;
             LoginReq.Click += LoginReq_Click;
             // 
-            // NetworkTypeLabel
+            // SocketTypeComboBox
             // 
-            NetworkTypeLabel.AutoSize = true;
-            NetworkTypeLabel.Location = new Point(12, 9);
-            NetworkTypeLabel.Name = "NetworkTypeLabel";
-            NetworkTypeLabel.Size = new Size(0, 15);
-            NetworkTypeLabel.TabIndex = 1;
+            SocketTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            SocketTypeComboBox.FormattingEnabled = true;
+            SocketTypeComboBox.Location = new Point(12, 12);
+            SocketTypeComboBox.Name = "SocketTypeComboBox";
+            SocketTypeComboBox.Size = new Size(121, 23);
+            SocketTypeComboBox.TabIndex = 1;
+            SocketTypeComboBox.SelectedIndexChanged += SocketTypeComboBox_SelectedIndexChanged;
             // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(NetworkTypeLabel);
+            Controls.Add(SocketTypeComboBox);
             Controls.Add(LoginReq);
             Name = "LoginForm";
             Text = "SuperSocketClient_Login";
+            Load += LoginForm_Load;
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
         private Button LoginReq;
-        private Label NetworkTypeLabel;
+        private ComboBox SocketTypeComboBox;
     }
 }

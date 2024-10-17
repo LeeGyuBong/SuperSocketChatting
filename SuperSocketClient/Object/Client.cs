@@ -8,7 +8,8 @@ namespace SuperSocketClient.Object
 {
     public class Client
     {
-        ISession? __session;
+        public SocketSessionType SocketSessionType { get; set; } = SocketSessionType.SuperSocket;
+        ISession? __session = null;
 
         public bool IsInit { get; private set; } = false;
         public string Name { get; private set; } = string.Empty;
@@ -25,10 +26,13 @@ namespace SuperSocketClient.Object
 
             if (__session == null)
             {
-                __session = new SocketSession();
-                //__session = new SuperSocketSession();
-                __session.AddPacketHandler(PacketID.LoginAck, ProcessLoginAck);
-                __session.AddPacketHandler(PacketID.BroadcastChatAck, ProcessBroadcastChatAck);
+                if (SocketSessionType  == SocketSessionType.SuperSocket)
+                    __session = new SuperSocketSession();
+                else if (SocketSessionType == SocketSessionType.NetSocket)
+                    __session = new SocketSession();
+
+                __session?.AddPacketHandler(PacketID.LoginAck, ProcessLoginAck);
+                __session?.AddPacketHandler(PacketID.BroadcastChatAck, ProcessBroadcastChatAck);
             }
 
             IsInit = true;
@@ -101,20 +105,20 @@ namespace SuperSocketClient.Object
                 return;
 
             PKLoginAck packet = MessagePackSerializer.Deserialize<PKLoginAck>(Convert.FromBase64String(recvPacket.Data));
-            if (packet != null)
+            if (packet == null)
+                return;
+
+            if (packet.ErrorEvent != ErrorEvent.None)
             {
-                if (packet.ErrorEvent != ErrorEvent.None)
-                {
-                    Logout();
-                    return;
-                }
-
-                UID = packet.UID;
-
-                // 채팅 씬으로 전환
-                var form = FormManager.Instance.GetForm(FormType.Login) as LoginForm;
-                form?.ChangeFormEventHandler.Invoke(this, EventArgs.Empty);
+                Logout();
+                return;
             }
+
+            UID = packet.UID;
+
+            // 채팅 씬으로 전환
+            var form = FormManager.Instance.GetForm(FormType.Login) as LoginForm;
+            form?.ChangeFormEventHandler.Invoke(this, EventArgs.Empty);
         }
 
         public void ProcessBroadcastChatAck(SocketPacket recvPacket)
@@ -123,15 +127,15 @@ namespace SuperSocketClient.Object
                 return;
 
             PKBroadcastChatAck packet = MessagePackSerializer.Deserialize<PKBroadcastChatAck>(Convert.FromBase64String(recvPacket.Data));
-            if (packet != null)
+            if (packet == null)
+                return;
+
+            ChatForm? chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
+            chatForm?.ChatBoxWriteEventHandler.Invoke(this, new BroadcastChatBoxData()
             {
-                ChatForm? chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
-                chatForm?.ChatBoxWriteEventHandler.Invoke(this, new BroadcastChatBoxData()
-                {
-                    Sender = packet.Sender,
-                    Message = packet.Message
-                });
-            }
+                Sender = packet.Sender,
+                Message = packet.Message
+            });
         }
     }
 }

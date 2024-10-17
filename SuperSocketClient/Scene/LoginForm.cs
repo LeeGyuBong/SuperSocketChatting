@@ -1,4 +1,5 @@
 using SuperSocketClient.Manager;
+using SuperSocketClient.Network;
 using SuperSocketClient.Object;
 using System.Windows.Forms;
 
@@ -15,10 +16,15 @@ namespace SuperSocketClient.Scene
 
             ChangeFormEventHandler = new EventHandler(ChangeFormEvent);
             ShowEventHandler = new EventHandler(ShowEvent);
+        }
 
-            // TODO : 폼에서 Net.Socket, 슈퍼소켓 선택해서 접속하도록 변경
-            NetworkTypeLabel.Text = "Net.Socket";
-            //NetworkTypeLabel.Text = "SuperSocket";
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            foreach (SocketSessionType type in Enum.GetValues(typeof(SocketSessionType)))
+            {
+                SocketTypeComboBox.Items.Add(type.ToString());
+            }
+            SocketTypeComboBox.SelectedIndex = 0;
         }
 
         private void LoginReq_Click(object sender, EventArgs e)
@@ -35,7 +41,7 @@ namespace SuperSocketClient.Scene
                 client.Init("Tester");
             }
 
-            if(client.SessionConnect() == false)
+            if (client.SessionConnect() == false)
             {
                 client.Logout();
                 return;
@@ -81,6 +87,17 @@ namespace SuperSocketClient.Scene
             FormManager.Instance.RemoveForm(FormType.Chat);
 
             FormManager.Instance.Client?.Logout();
+        }
+
+        private void SocketTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SocketSessionType selectType = (SocketSessionType)SocketTypeComboBox.SelectedIndex;
+
+            Client? client = FormManager.Instance.Client;
+            if (client != null)
+            {
+                client.SocketSessionType = selectType;
+            }
         }
     }
 }

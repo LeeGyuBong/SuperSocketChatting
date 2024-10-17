@@ -2,6 +2,12 @@
 
 namespace SuperSocketClient.Network
 {
+    public enum SocketSessionType
+    {
+        NetSocket,
+        SuperSocket,
+    }
+
     interface ISession
     {
         bool IsConnected { get; }

@@ -24,6 +24,10 @@ namespace SuperSocketClient.Scene
             ShowEventHandler = new EventHandler(ShowEvent);
             ChatBoxWriteEventHandler = new EventHandler<BroadcastChatBoxData>(ChatBoxWriteEvent);
         }
+        private void ChatForm_Shown(object sender, EventArgs e)
+        {
+            FormManager.Instance.Client?.SendLoadCompleted();
+        }
 
         private void LogoutReq_Click(object sender, EventArgs e)
         {
@@ -61,10 +65,9 @@ namespace SuperSocketClient.Scene
 
         private void LogoutEvent(object? sender, EventArgs e)
         {
-            LoginForm? loginForm = FormManager.Instance.GetForm(FormType.Login) as LoginForm;
-            if (loginForm != null)
+            if (FormManager.Instance.GetForm(FormType.Login) is LoginForm loginForm)
             {
-                loginForm?.ShowEventHandler.Invoke(this, new EventArgs());
+                loginForm.ShowEventHandler.Invoke(this, new EventArgs());
             }
         }
 
@@ -74,15 +77,13 @@ namespace SuperSocketClient.Scene
             {
                 Invoke(new MethodInvoker(delegate ()
                 {
-                    Show();
+                    ShowDialog();
                 }));
             }
             else
             {
-                Show();
+                ShowDialog();
             }
-
-            Application.Run(); // TODO : 좋지 못한 해결법. 개선해야함
         }
 
         private void ChatBoxWriteEvent(object? sender, BroadcastChatBoxData e)
@@ -110,11 +111,6 @@ namespace SuperSocketClient.Scene
             {
                 ChatBoradTextBox.AppendText(value);
             }
-        }
-
-        private void ChatForm_Shown(object sender, EventArgs e)
-        {
-            FormManager.Instance.Client?.SendLoadCompleted();
         }
     }
 }
