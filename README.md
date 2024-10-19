@@ -21,5 +21,5 @@ SuperSocket v1.6.6.1
 
 사용 기타 라이브러리   
 ```
-MessagePack v2.5.172
+MessagePack v2.5.187
 ```
