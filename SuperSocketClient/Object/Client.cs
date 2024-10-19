@@ -32,6 +32,7 @@ namespace SuperSocketClient.Object
                     __session = new SocketSession();
 
                 __session?.AddPacketHandler(PacketID.LoginAck, ProcessLoginAck);
+                __session?.AddPacketHandler(PacketID.ChatInfoAck, ProcessChatInfoAck);
                 __session?.AddPacketHandler(PacketID.BroadcastLoginAck, ProcessBroadcastLoginAck);
                 __session?.AddPacketHandler(PacketID.BroadcastLogoutAck, ProcessBroadcastLogoutAck);
                 __session?.AddPacketHandler(PacketID.BroadcastChatAck, ProcessBroadcastChatAck);
@@ -133,6 +134,19 @@ namespace SuperSocketClient.Object
             form?.ChangeFormEventHandler.Invoke(this, EventArgs.Empty);
         }
 
+        public void ProcessChatInfoAck(SocketPacket recvPacket)
+        {
+            if (recvPacket == null)
+                return;
+
+            PKChatInfoAck packet = MessagePackSerializer.Deserialize<PKChatInfoAck>(Convert.FromBase64String(recvPacket.Data));
+            if (packet == null)
+                return;
+
+            ChatForm? chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
+            chatForm?.InitChatInfoEventHandler.Invoke(this, packet.UserList);
+        }
+
         public void ProcessBroadcastLoginAck(SocketPacket recvPacket)
         {
             if (recvPacket == null)
@@ -143,10 +157,7 @@ namespace SuperSocketClient.Object
                 return;
 
             ChatForm? chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
-            chatForm?.ChatBoxWriteEventHandler.Invoke(this, new BroadcastChatBoxData()
-            {
-                Message = $"{packet.UserName}님이 로그인했습니다."
-            });
+            chatForm?.OtherClientLoginEventHandler.Invoke(this, packet.UserName);
         }
 
         public void ProcessBroadcastLogoutAck(SocketPacket recvPacket)
@@ -159,10 +170,7 @@ namespace SuperSocketClient.Object
                 return;
 
             ChatForm? chatForm = FormManager.Instance.GetForm(FormType.Chat) as ChatForm;
-            chatForm?.ChatBoxWriteEventHandler.Invoke(this, new BroadcastChatBoxData()
-            {
-                Message = $"{packet.UserName}님이 로그아웃했습니다."
-            });
+            chatForm?.OtherClientLogoutEventHandler.Invoke(this, packet.UserName);
         }
 
         public void ProcessBroadcastChatAck(SocketPacket recvPacket)

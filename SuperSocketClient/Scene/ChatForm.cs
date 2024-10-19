@@ -1,6 +1,5 @@
 ﻿using SuperSocketClient.Manager;
 using SuperSocketClient.Object;
-using System.Windows.Forms;
 
 namespace SuperSocketClient.Scene
 {
@@ -12,9 +11,14 @@ namespace SuperSocketClient.Scene
 
     public partial class ChatForm : Form
     {
+        private List<string> __loginUserNameList = new List<string>();
+
         public EventHandler LogoutEventHandler;
         public EventHandler ShowEventHandler;
         public EventHandler<BroadcastChatBoxData> ChatBoxWriteEventHandler;
+        public EventHandler<List<string>> InitChatInfoEventHandler;
+        public EventHandler<string> OtherClientLoginEventHandler;
+        public EventHandler<string> OtherClientLogoutEventHandler;
 
         public ChatForm()
         {
@@ -23,7 +27,11 @@ namespace SuperSocketClient.Scene
             LogoutEventHandler = new EventHandler(LogoutEvent);
             ShowEventHandler = new EventHandler(ShowEvent);
             ChatBoxWriteEventHandler = new EventHandler<BroadcastChatBoxData>(ChatBoxWriteEvent);
+            InitChatInfoEventHandler = new EventHandler<List<string>>(InitChatInfoEvent);
+            OtherClientLoginEventHandler = new EventHandler<string>(OtherClientLoginEvent);
+            OtherClientLogoutEventHandler = new EventHandler<string>(OtherClientLogoutEvent);
         }
+
         private void ChatForm_Shown(object sender, EventArgs e)
         {
             FormManager.Instance.Client?.SendLoadCompleted();
@@ -88,31 +96,144 @@ namespace SuperSocketClient.Scene
 
         private void ChatBoxWriteEvent(object? sender, BroadcastChatBoxData e)
         {
-            // TODO : 텍스트가 일정 쌓였으면 비워줘야함
-            // 참고 : https://mintandcompany.tistory.com/entry/c-TextBox-MultiLine-%EC%82%AD%EC%A0%9C%EB%B0%A9%EB%B2%95
+            if (string.IsNullOrEmpty(e.Sender) ||
+                string.IsNullOrWhiteSpace(e.Sender))
+            {
+                return;
+            }
+                
             DateTime now = DateTime.Now;
-            string value = string.Empty;
-            if (string.IsNullOrEmpty(e.Sender) == false &&
-                string.IsNullOrWhiteSpace(e.Sender) == false)
-            {
-                value = $"[{now.ToString("HH:mm:ss")}] {e.Sender} : {e.Message}\r\n";
-            }
-            else
-            {
-                value = $"[{now.ToString("HH:mm:ss")}] {e.Message}\r\n";
-            }
+            string value = $"[{now.ToString("HH:mm:ss")}] {e.Sender} : {e.Message}{Environment.NewLine}";
 
             if (InvokeRequired)
             {
                 Invoke(new MethodInvoker(delegate ()
                 {
+                    if (ChatBoradTextBox.Lines.Length > 200) // 텍스트가 일정량 쌓였으면 비워주기
+                    {
+                        int index = ChatBoradTextBox.Text.IndexOf(Environment.NewLine);
+                        ChatBoradTextBox.Text = ChatBoradTextBox.Text.Remove(0, index + 2);
+                    }
 
                     ChatBoradTextBox.AppendText(value);
                 }));
             }
             else
             {
+                if (ChatBoradTextBox.Lines.Length > 200) // 텍스트가 일정량 쌓였으면 비워주기
+                {
+                    int index = ChatBoradTextBox.Text.IndexOf(Environment.NewLine);
+                    ChatBoradTextBox.Text = ChatBoradTextBox.Text.Remove(0, index + 2);
+                }
+
                 ChatBoradTextBox.AppendText(value);
+            }
+        }
+
+        private void InitChatInfoEvent(object? sender, List<string> e)
+        {
+            if(e.Count <= 0)
+            {
+                return;
+            }
+
+            __loginUserNameList.Clear();
+            __loginUserNameList = e.ToList();
+
+            string userListString = string.Empty;
+            foreach (string userName in __loginUserNameList)
+            {
+                userListString += $"{userName}{Environment.NewLine}";
+            }
+
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(delegate ()
+                {
+                    ClientList.Text = userListString;
+                }));
+            }
+            else
+            {
+                ClientList.Text = userListString;
+            }
+        }
+
+        private void OtherClientLoginEvent(object? sender, string e)
+        {
+            if (string.IsNullOrEmpty(e) ||
+               string.IsNullOrWhiteSpace(e))
+            {
+                return;
+            }
+
+            if(__loginUserNameList.Contains(e) == false)
+            {
+                __loginUserNameList.Add(e);
+            }
+
+            string userListString = string.Empty;
+            foreach (string userName in __loginUserNameList)
+            {
+                userListString += $"{userName}{Environment.NewLine}";
+            }
+
+            DateTime now = DateTime.Now;
+            string noticeMessage = $"[{now.ToString("HH:mm:ss")}] {e}님이 로그인했습니다.{Environment.NewLine}";
+
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(delegate ()
+                {
+                    ClientList.Text = userListString;
+
+                    ChatBoradTextBox.AppendText(noticeMessage);
+                }));
+            }
+            else
+            {
+                ClientList.Text = userListString;
+
+                ChatBoradTextBox.AppendText(noticeMessage);
+            }
+        }
+
+        private void OtherClientLogoutEvent(object? sender, string e)
+        {
+            if (string.IsNullOrEmpty(e) ||
+               string.IsNullOrWhiteSpace(e))
+            {
+                return;
+            }
+
+            if (__loginUserNameList.Contains(e))
+            {
+                __loginUserNameList.Remove(e);
+            }
+
+            string userListString = string.Empty;
+            foreach (string userName in __loginUserNameList)
+            {
+                userListString += $"{userName}{Environment.NewLine}";
+            }
+
+            DateTime now = DateTime.Now;
+            string noticeMessage = $"[{now.ToString("HH:mm:ss")}] {e}님이 로그아웃했습니다.{Environment.NewLine}";
+
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(delegate ()
+                {
+                    ClientList.Text = userListString;
+
+                    ChatBoradTextBox.AppendText(noticeMessage);
+                }));
+            }
+            else
+            {
+                ClientList.Text = userListString;
+
+                ChatBoradTextBox.AppendText(noticeMessage);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using MessagePack;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace SuperSocketShared.Packet
@@ -124,6 +125,13 @@ namespace SuperSocketShared.Packet
     [MessagePackObject]
     public class PKLoadCompletedReq
     {
+    }
+
+    [MessagePackObject]
+    public class PKChatInfoAck
+    {
+        [Key(0)]
+        public List<string> UserList { get; set; } = new List<string>();
     }
 
     [MessagePackObject]

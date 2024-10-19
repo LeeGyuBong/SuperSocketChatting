@@ -3,6 +3,8 @@ using SuperSocketServer.Manager;
 using SuperSocketServer.Network.TCP;
 using SuperSocketShared.Packet;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SuperSocketServer.PacketHandler
 {
@@ -38,13 +40,29 @@ namespace SuperSocketServer.PacketHandler
             if (packet == null)
                 return;
 
-            PKBroadcastLoginAck ack = new PKBroadcastLoginAck
             {
-                UserName = session.UserName
-            };
+                SessionManager.Instance.GetSessionNameList(out List<string> getUserNameList);
 
-            SocketPacket ackPacket = new SocketPacket((int)PacketID.BroadcastLoginAck, Convert.ToBase64String(MessagePackSerializer.Serialize(ack)));
-            SessionManager.Instance.SendAll(ackPacket.GetBytes());
+                if(getUserNameList.Count > 0)
+                {
+                    PKChatInfoAck ack = new PKChatInfoAck
+                    {
+                        UserList = getUserNameList.ToList()
+                    };
+
+                    session.SendPacket(PacketID.ChatInfoAck, ack);
+                }
+            }
+
+            {
+                PKBroadcastLoginAck ack = new PKBroadcastLoginAck
+                {
+                    UserName = session.UserName
+                };
+
+                SocketPacket ackPacket = new SocketPacket((int)PacketID.BroadcastLoginAck, Convert.ToBase64String(MessagePackSerializer.Serialize(ack)));
+                SessionManager.Instance.SendAll(ackPacket.GetBytes());
+            }
         }
 
         public void ProcessChatReq(SocketSession session, string packetData)

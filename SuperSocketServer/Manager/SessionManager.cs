@@ -4,6 +4,7 @@ using SuperSocketServer.Utility;
 using SuperSocketShared.Packet;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace SuperSocketServer.Manager
 {
@@ -71,6 +72,16 @@ namespace SuperSocketServer.Manager
             foreach (var session in __sessionDic.Values)
             {
                 session.SendPacket(sendBuffer);
+            }
+        }
+
+        public void GetSessionNameList(out List<string> list)
+        {
+            list = new List<string>();
+
+            foreach (var session in __sessionDic.Values)
+            {
+                list.Add(session.UserName);
             }
         }
     }

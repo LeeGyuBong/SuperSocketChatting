@@ -8,6 +8,7 @@ namespace SuperSocketShared.Packet
         LoginAck,
 
         LoadCompletedReq,
+        ChatInfoAck,
 
         ChatReq,
 
