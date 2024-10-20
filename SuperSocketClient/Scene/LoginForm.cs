@@ -54,6 +54,7 @@ namespace SuperSocketClient.Scene
 
             if (client.SessionConnect() == false)
             {
+                ErrorLabelTextUpdateEventHandler.Invoke(this, "서버 연결 실패");
                 client.Logout();
                 return;
             }
