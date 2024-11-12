@@ -5,12 +5,14 @@ using SuperSocketShared.Packet;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SuperSocketServer.Manager
 {
     public class SessionManager : Singleton<SessionManager>
     {
-        private Int64 __sessionId = 0;
+        private int __sessionId = 0;
 
         private ConcurrentDictionary<Int64/*UID*/, SocketSession> __sessionDic = new ConcurrentDictionary<Int64, SocketSession>();
 
@@ -41,9 +43,10 @@ namespace SuperSocketServer.Manager
         {
             if (__sessionDic.ContainsKey(session.UID) == false)
             {
-                session.SetUID(++__sessionId);
+                var uid = Interlocked.Increment(ref __sessionId);
 
-                __sessionDic.TryAdd(__sessionId, session);
+                session.SetUID(uid);
+                __sessionDic.TryAdd(uid, session);
             }
         }
 
