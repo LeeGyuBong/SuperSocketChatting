@@ -1,6 +1,5 @@
 # SuperSocketStudy
 
-* * *
 클라이언트 사용버전   
 ```
 .NET 6.0
